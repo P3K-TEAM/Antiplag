@@ -129,5 +129,4 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'files')
 MEDIA_URL = '/files/'
 
-USE_TZ = True
-TIME_ZONE = 'Europe/Bratislava'
+DEBUG = True

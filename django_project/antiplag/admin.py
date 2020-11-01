@@ -1,18 +1,18 @@
 from django.contrib import admin
-from .models import User, Paper, File
+from .models import User, Paper
 
 # Register your models here.
 
 admin.site.register(User)
 #admin.site.register(Paper)
 
-class FilesInline(admin.TabularInline):
-    model = File
+class PapersInline(admin.TabularInline):
+    model = Paper
 
 
-class FilesAdmin(admin.ModelAdmin):
+class PapersAdmin(admin.ModelAdmin):
     inlines = [
-        FilesInline,
+        PapersInline,
     ]
 
-admin.site.register(Paper, FilesAdmin)
+admin.site.register(Paper, PapersAdmin)

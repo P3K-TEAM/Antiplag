@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import File
+from .models import Paper
 
-class FileSerializer(serializers.ModelSerializer):
+class PaperSerializer(serializers.ModelSerializer):
     class Meta:
-        model = File
-        fields = ['id', 'file', 'paper']
+        model = Paper
+        fields = ['title','text','file','timestamp','user']
