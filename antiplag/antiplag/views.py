@@ -9,7 +9,7 @@ from rest_framework import generics
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render
 
-def PaperList(request):
+def file_list(request):
     def get(self, request, format=None):
         papers = Paper.objects.all()
         serializer = PaperSerializer(papers, many=True)
@@ -23,7 +23,7 @@ def PaperList(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-def PaperDetail(request, pk):
+def file_detail(request, pk):
     def get_object(self, pk):
         try:
             return Paper.objects.get(pk=pk)
@@ -49,7 +49,7 @@ def PaperDetail(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class PaperListMixin(mixins.ListModelMixin,
+class file_list_mixin(mixins.ListModelMixin,
                   mixins.CreateModelMixin,
                   generics.GenericAPIView):
     queryset = Paper.objects.all()
@@ -62,7 +62,7 @@ class PaperListMixin(mixins.ListModelMixin,
         return self.create(request, *args, **kwargs)
 
 
-class PaperDetailMixin(mixins.RetrieveModelMixin,
+class file_detail_mixin(mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
                     mixins.DestroyModelMixin,
                     generics.GenericAPIView):
