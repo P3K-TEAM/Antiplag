@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'antiplag',
         'HOST': '127.0.0.1',
         'USER': 'postgres',
-        'PASSWORD': 'qwelkj125',
+        'PASSWORD': 'zxcvbnm123',
         'PORT': '5432',
     }
 }
