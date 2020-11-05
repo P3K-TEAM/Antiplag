@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'antiplag',
         'HOST': '127.0.0.1',
         'USER': 'postgres',
-        'PASSWORD': 'zxcvbnm123',
+        'PASSWORD': 'postgres',
         'PORT': '5432',
     }
 }
@@ -129,3 +129,9 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'files')
 
 MEDIA_URL = '/files/'
+
+
+# Celery configuration
+CELERY_BROKER_URL = 'pyamqp://'
+CELERY_RESULT_BACKEND = 'rpc://'
+CELERY_RESULT_PERSISTENT = True
