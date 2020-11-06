@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'antiplag',
         'HOST': '127.0.0.1',
         'USER': 'postgres',
-        'PASSWORD': 'zxcvbnm123',
+        'PASSWORD': 'qwelkj125',
         'PORT': '5432',
     }
 }
@@ -127,3 +127,6 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'files')
 MEDIA_URL = '/files/'
+
+DEBUG = False
+ALLOWED_HOSTS = ['*']
