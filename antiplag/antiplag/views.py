@@ -1,12 +1,12 @@
 from django.shortcuts import render
-from .models import Submission, Paper
-from .serializers import SubmissionSerializer, PaperSerializer
+from .models import Submission, Document
+from .serializers import SubmissionSerializer, DocumentSerializer
 from django.http import Http404
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import mixins
 from rest_framework import generics
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from rest_framework.views import APIView
 from rest_framework import viewsets
 
@@ -33,13 +33,12 @@ class file_detail(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, *args, **kwargs):
-        file_serializer = PaperSerializer(data=request.data)
-        if file_serializer.is_valid():
-            file_serializer.save()
-
-            return Response(file_serializer.data, status=status.HTTP_201_CREATED)
+        doc_serializer = DocumentSerializer(data=request.data)
+        if doc_serializer.is_valid():
+            doc_serializer.save()
+            return Response(doc_serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(doc_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_object(self, pk):
         try:
@@ -69,8 +68,8 @@ class file_detail(APIView):
 class file_list_mixin(mixins.ListModelMixin,
                       mixins.CreateModelMixin,
                       generics.GenericAPIView):
-    queryset = Paper.objects.all()
-    serializer_class = PaperSerializer
+    queryset = Document.objects.all()
+    serializer_class = DocumentSerializer
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -83,8 +82,8 @@ class file_detail_mixin(mixins.RetrieveModelMixin,
                         mixins.UpdateModelMixin,
                         mixins.DestroyModelMixin,
                         generics.GenericAPIView):
-    queryset = Paper.objects.all()
-    serializer_class = PaperSerializer
+    queryset = Document.objects.all()
+    serializer_class = DocumentSerializer
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)

@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import index, file_list, ViewSet, file_detail
+from .views import index, file_list, file_detail
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
