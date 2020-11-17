@@ -1,8 +1,11 @@
 from django.conf.urls import url, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import file_detail, index, file_list
+from .views import index, file_list, ViewSet, file_detail
 from django.urls import path
+from rest_framework.routers import DefaultRouter
+
+
 
 urlpatterns = [
     path('', index, name='index'),
@@ -10,5 +13,6 @@ urlpatterns = [
     #path('file/<int:pk>/', file_detail.as_view()),
     url(r'^upload/$', file_detail().as_view(), name='file-upload'),
 ]
+
 if settings.DEBUG:
   urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

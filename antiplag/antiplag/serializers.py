@@ -1,7 +1,4 @@
 from rest_framework import serializers
-from .models import Paper
+from .models import Submission, Paper
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
-class PaperSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Paper
-        fields = ('title', 'file')

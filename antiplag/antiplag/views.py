@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .models import Paper
-from .serializers import PaperSerializer
+from .models import Submission, Paper
+from .serializers import SubmissionSerializer, PaperSerializer
 from django.http import Http404
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,10 +8,12 @@ from rest_framework import mixins
 from rest_framework import generics
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
+from rest_framework import viewsets
 
 
 def index(request):
     return render(request, 'home.html')
+
 
 class file_list(APIView):
     def get(self, request, format=None):
