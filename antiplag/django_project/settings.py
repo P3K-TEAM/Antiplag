@@ -128,5 +128,5 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'files')
 MEDIA_URL = '/files/'
 
-DEBUG = False
-ALLOWED_HOSTS = ['*']
+#DEBUG = False
+#ALLOWED_HOSTS = ['*']

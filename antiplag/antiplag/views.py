@@ -34,11 +34,18 @@ class file_detail(APIView):
 
     def post(self, request, *args, **kwargs):
         doc_serializer = DocumentSerializer(data=request.data)
-        if doc_serializer.is_valid():
-            doc_serializer.save()
-            return Response(doc_serializer.data, status=status.HTTP_201_CREATED)
+        submission_serializer = SubmissionSerializer(data=request.data)
+        if submission_serializer.is_valid():
+            submission = submission_serializer.save()
+            if doc_serializer.is_valid():
+                document = doc_serializer.save()
+                document.submission = submission
+                document.save()
+                return Response(SubmissionSerializer(submission).data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response(doc_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def get_object(self, pk):
         try:
