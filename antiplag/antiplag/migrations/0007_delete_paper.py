@@ -6,11 +6,11 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('antiplag', '0006_auto_20201106_1223'),
+        ("antiplag", "0006_auto_20201106_1223"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='Paper',
+            name="Paper",
         ),
     ]

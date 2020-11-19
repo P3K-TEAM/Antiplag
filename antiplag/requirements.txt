@@ -1,5 +1,5 @@
 djangorestframework=3.12.1
 numpy=1.19.3
-pycontractions
+pycontractions=2.0.1
 nltk
 beautifulsoup

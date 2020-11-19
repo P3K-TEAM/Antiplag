@@ -6,20 +6,20 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('antiplag', '0003_auto_20201106_0939'),
+        ("antiplag", "0003_auto_20201106_0939"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='paper',
-            name='text',
+            model_name="paper",
+            name="text",
         ),
         migrations.RemoveField(
-            model_name='paper',
-            name='timestamp',
+            model_name="paper",
+            name="timestamp",
         ),
         migrations.RemoveField(
-            model_name='paper',
-            name='user',
+            model_name="paper",
+            name="user",
         ),
     ]

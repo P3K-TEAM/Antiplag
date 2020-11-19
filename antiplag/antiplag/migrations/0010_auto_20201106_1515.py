@@ -6,18 +6,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('antiplag', '0009_auto_20201106_1445'),
+        ("antiplag", "0009_auto_20201106_1445"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='binaryfile',
-            name='submission',
+            model_name="binaryfile",
+            name="submission",
         ),
         migrations.DeleteModel(
-            name='Sub',
+            name="Sub",
         ),
         migrations.DeleteModel(
-            name='BinaryFile',
+            name="BinaryFile",
         ),
     ]

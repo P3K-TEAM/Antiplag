@@ -9,29 +9,31 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('antiplag', '0002_auto_20201025_2102'),
+        ("antiplag", "0002_auto_20201025_2102"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='paper',
-            name='file',
-            field=models.FileField(null=True, upload_to='papers/'),
+            model_name="paper",
+            name="file",
+            field=models.FileField(null=True, upload_to="papers/"),
         ),
         migrations.AddField(
-            model_name='paper',
-            name='timestamp',
+            model_name="paper",
+            name="timestamp",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='paper',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="paper",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
+            ),
         ),
         migrations.DeleteModel(
-            name='File',
+            name="File",
         ),
         migrations.DeleteModel(
-            name='User',
+            name="User",
         ),
     ]

@@ -7,36 +7,64 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('antiplag', '0008_paper'),
+        ("antiplag", "0008_paper"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Sub',
+            name="Sub",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('issued_at', models.DateTimeField(auto_now_add=True)),
-                ('completed', models.BooleanField(default=False)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("issued_at", models.DateTimeField(auto_now_add=True)),
+                ("completed", models.BooleanField(default=False)),
             ],
             options={
-                'ordering': ['-issued_at'],
+                "ordering": ["-issued_at"],
             },
         ),
         migrations.AlterField(
-            model_name='paper',
-            name='submission',
-            field=models.ForeignKey(default=0, on_delete=django.db.models.deletion.CASCADE, related_name='paper', to='antiplag.submission'),
+            model_name="paper",
+            name="submission",
+            field=models.ForeignKey(
+                default=0,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="paper",
+                to="antiplag.submission",
+            ),
         ),
         migrations.CreateModel(
-            name='BinaryFile',
+            name="BinaryFile",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(upload_to='uploads/binary/')),
-                ('submission', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='binary_files', to='antiplag.submission')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("file", models.FileField(upload_to="uploads/binary/")),
+                (
+                    "submission",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="binary_files",
+                        to="antiplag.submission",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Binary file',
-                'verbose_name_plural': 'Binary files',
+                "verbose_name": "Binary file",
+                "verbose_name_plural": "Binary files",
             },
         ),
     ]

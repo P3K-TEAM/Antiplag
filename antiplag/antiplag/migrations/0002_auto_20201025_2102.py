@@ -7,21 +7,34 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('antiplag', '0001_initial'),
+        ("antiplag", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='paper',
-            name='text',
-            field=models.CharField(default='', max_length=500),
+            model_name="paper",
+            name="text",
+            field=models.CharField(default="", max_length=500),
         ),
         migrations.CreateModel(
-            name='File',
+            name="File",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(upload_to='papers/')),
-                ('paper', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='antiplag.paper')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("file", models.FileField(upload_to="papers/")),
+                (
+                    "paper",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="antiplag.paper"
+                    ),
+                ),
             ],
         ),
     ]

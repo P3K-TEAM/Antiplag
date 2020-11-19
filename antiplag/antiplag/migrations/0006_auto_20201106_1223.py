@@ -7,13 +7,17 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('antiplag', '0005_auto_20201106_1221'),
+        ("antiplag", "0005_auto_20201106_1221"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='paper',
-            name='submission',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='files', to='antiplag.submission'),
+            model_name="paper",
+            name="submission",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="files",
+                to="antiplag.submission",
+            ),
         ),
     ]
