@@ -33,17 +33,19 @@ class file_detail(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, *args, **kwargs):
-        doc_serializer = DocumentSerializer(data=request.data)
+
         submission_serializer = SubmissionSerializer(data=request.data)
         if submission_serializer.is_valid():
             submission = submission_serializer.save()
-            if doc_serializer.is_valid():
-                document = doc_serializer.save()
-                document.submission = submission
-                document.save()
-                return Response(SubmissionSerializer(submission).data, status=status.HTTP_201_CREATED)
-            else:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+            print(request.data)
+            for file in request.FILES.getlist('files'):
+                doc_serializer = DocumentSerializer(data={"file": file})
+                if doc_serializer.is_valid():
+                    document = doc_serializer.save()
+                    document.submission = submission
+                    document.save()
+
+            return Response(SubmissionSerializer(submission).data, status=status.HTTP_201_CREATED)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -100,3 +102,4 @@ class file_detail_mixin(mixins.RetrieveModelMixin,
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+

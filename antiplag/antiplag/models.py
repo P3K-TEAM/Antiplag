@@ -15,9 +15,8 @@ class Submission(models.Model):
     
 
 class Document(models.Model):
-    file = models.FileField(upload_to=get_file_path,
-                        null=True,
-                        blank=True)
+
+    file = models.FileField(upload_to=get_file_path, null=True, blank=True)
     submission = models.ForeignKey(Submission, on_delete=models.CASCADE, default=0)
 
     def __str__(self):

@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import url
@@ -28,4 +29,17 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+"""
 
+from django.urls import include, path
+from rest_framework import routers
+from antiplag import views
+
+router = routers.DefaultRouter()
+router.register(r'file', views.FileViewSet, basename='file')
+
+urlpatterns = [
+    #path('admin/', admin.site.urls),
+	path('upload/', include(router.urls)),
+]
+"""
