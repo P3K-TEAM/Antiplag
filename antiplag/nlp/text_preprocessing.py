@@ -17,9 +17,9 @@ from textblob import TextBlob
 
 
 def preprocess_text(text, strip_html_tags=True, remove_extra_whitespace=True, remove_accented_chars=False,
-                 expand_contractions=False, remove_punctuation=True, lowercase_text=True, words_to_numbers=False,
-                 numbers_to_words=False, remove_numbers=True, remove_stopwords=False, language="sk",
-                 tokenize_words=True, tokenize_sentences=False, stem=False, lemmatize=True):
+                    expand_contractions=False, remove_punctuation=True, lowercase_text=True, words_to_numbers=False,
+                    numbers_to_words=False, remove_numbers=True, remove_stopwords=False, language="sk",
+                    tokenize_words=True, tokenize_sentences=False, stem=False, lemmatize=True):
     processed_text = text
     tokenized_text = []
 
@@ -231,7 +231,7 @@ def stem_func(word_tokens):
     return stems
 
 
-def lemmatize_func(word_tokens,language="sk"):
+def lemmatize_func(word_tokens, language="sk"):
     morph = majka.Majka('wordlists/lemmas.sk.fsa')
     if language == "sk":
         morph = majka.Majka('wordlists/lemmas.sk.fsa')

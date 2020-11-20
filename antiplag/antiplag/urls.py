@@ -1,8 +1,8 @@
 from django.conf.urls import url
-from .views import file_detail
+from .views import FileDetail
 
 
 urlpatterns = [
-    url(r"^upload/$", file_detail().as_view(), name="file-upload"),
+    url(r"^upload/$", FileDetail().as_view(), name="file-upload"),
 ]
 
