@@ -1,7 +1,14 @@
 from rest_framework import serializers
-from .models import Paper
+from .models import Submission, Document
 
-class PaperSerializer(serializers.ModelSerializer):
+
+class SubmissionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Paper
-        fields = ('title', 'file')
+        model = Submission
+        fields = ["id"]
+
+
+class DocumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Document
+        fields = ["file", "submission"]

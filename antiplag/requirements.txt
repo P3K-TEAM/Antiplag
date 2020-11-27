@@ -6,3 +6,5 @@ djangorestframework==3.12.1
 psycopg2==2.8.6
 pytz==2020.4
 sqlparse==0.4.1
+numpy=1.19.3
+pycontractions=2.0.1
