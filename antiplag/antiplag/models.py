@@ -19,8 +19,7 @@ class Submission(models.Model):
 
 class Document(models.Model):
 
-    @staticmethod
-    def get_file_path(filename):
+    def get_file_path(self, filename):
         ext = filename.split(".")[-1]
         filename = "%s.%s" % (uuid.uuid4(), ext)
         return os.path.join("documents/", filename)
