@@ -8,6 +8,8 @@ from rest_framework import mixins
 from rest_framework import generics
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from rest_framework.views import APIView
+import json
+from langdetect import detect
 
 
 class FileList(APIView):
@@ -28,22 +30,45 @@ class FileDetail(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, *args, **kwargs):
-
-        submission_serializer = SubmissionSerializer(data=request.data)
+        submission_serializer = SubmissionSerializer(data={"status": Submission.SubmissionStatus.PENDING})
         if submission_serializer.is_valid():
             submission = submission_serializer.save()
-            for file in request.FILES.getlist("files"):
-                doc_serializer = DocumentSerializer(data={"file": file})
+
+            if request.META['HTTP_TYPE'] == Document.DocumentType.FILE:
+                for file in request.FILES.getlist("files"):
+                    text = Document.process_file(self, file)
+                    text_raw = Document.process_raw_text(self, text)
+                    language = Document.detect_language(self, text_raw)
+                    doc_serializer = DocumentSerializer(data={"file": file,
+                                                              "type": Document.DocumentType.FILE,
+                                                              "text": text,
+                                                              "text_raw": text_raw,
+                                                              "language": language
+                                                              })
+                    if doc_serializer.is_valid():
+                        document = doc_serializer.save()
+                        document.submission = submission
+                        document.save()
+                return Response(SubmissionSerializer(submission).data, status=status.HTTP_201_CREATED)
+            elif request.META['HTTP_TYPE'] == Document.DocumentType.TEXT:
+
+                text = request.POST.get('text', "no_text_attribute")
+                raw_text = request.POST.get('text', "no_text_attribute")
+                language = Document.detect_language(self, raw_text)
+                doc_serializer = DocumentSerializer(data={"type": Document.DocumentType.FILE,
+                                                          "text": text,
+                                                          "text_raw": raw_text,
+                                                          "language": language
+                                                          })
                 if doc_serializer.is_valid():
                     document = doc_serializer.save()
                     document.submission = submission
                     document.save()
-
-            return Response(
-                SubmissionSerializer(submission).data, status=status.HTTP_201_CREATED
-            )
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    print(doc_serializer.errors)
+                return Response(doc_serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def get_object(self, pk):
         try:

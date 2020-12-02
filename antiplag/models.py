@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid
 import os
+from langdetect import detect
 
 
 class Submission(models.Model):
@@ -62,6 +63,9 @@ class Document(models.Model):
     def process_raw_text(self, text_raw):
         # Replace with actual process raw text method.
         return text_raw
+
+    def detect_language(self, text_raw):
+        return detect(text_raw)
 
 class Result(models.Model):
 
