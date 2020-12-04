@@ -14,7 +14,20 @@ import majka
 import string
 from pycontractions import Contractions
 from textblob import TextBlob
+import textract
+import os
 
+def text_extraction(path_to_file):
+    file_name, file_extension = os.path.splitext(path_to_file)
+
+    if file_extension == '.srt' or file_extension == '.md':
+        file_extension = '.txt'
+        path_to_file_old = path_to_file
+        path_to_file = file_name + file_extension
+        os.rename(path_to_file_old, path_to_file)
+
+    text_string = textract.process(path_to_file).decode()
+    return text_string
 
 def preprocess_text(text, strip_html_tags=True, remove_extra_whitespace=True, remove_accented_chars=False,
                     expand_contractions=False, remove_punctuation=True, lowercase_text=True, words_to_numbers=False,
