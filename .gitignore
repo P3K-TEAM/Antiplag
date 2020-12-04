@@ -1,8 +1,5 @@
-# Custom gitignore:
-# Enviroment variables file
-antiplag/.env
 # Uploaded documents
-antiplag/files/
+files/
 
 # Created by https://www.toptal.com/developers/gitignore/api/django
 # Edit at https://www.toptal.com/developers/gitignore?templates=django
