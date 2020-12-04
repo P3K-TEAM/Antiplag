@@ -62,5 +62,7 @@ def text_comparison(testing, database):
     }
 
     # Saving results as "result_ID.json" files
-    with open('result_' + str(result_id) + '.json' , 'w') as json_file:
-        json.dump(result_json, json_file)
+    #with open('result_' + str(result_id) + '.json' , 'w') as json_file:
+    #    json.dump(result_json, json_file)
+
+    return result_json

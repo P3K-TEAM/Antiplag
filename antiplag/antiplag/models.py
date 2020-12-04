@@ -62,3 +62,9 @@ class Document(models.Model):
     def process_raw_text(self, text_raw):
         # Replace with actual process raw text method.
         return text_raw
+
+class Result(models.Model):
+
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    matched_docs = models.JSONField()
+    error_msg = models.TextField(null=False)
