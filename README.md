@@ -27,8 +27,13 @@
 
 1. Run database migrations
     
-    1. Have your database server running first
-    1. Setup database credentials in environment variables 
+    1. Have your database server running first (If you're having troubles with this step, check our [Setting up PostgreSQL with Docker docs](docs/SETUP_DOCKER_DATABASE.md))
+    1. Setup database credentials to `DATABASE_URL` variable in `.env` file in following format:
+        
+       ```
+       postgresql://<user>:<password>@<hostname>:<port>/<database>
+       ```
+     
     1. To create all necessary tables in database, run
         
         ```
@@ -50,4 +55,4 @@
 
 ## Guides
 
-To find out how to format code in this repository, please read our [code formatting docs](docs/CODE_FORMATTING.md)
+- To find out how to format code in this repository, please read our [code formatting docs](docs/CODE_FORMATTING.md)
