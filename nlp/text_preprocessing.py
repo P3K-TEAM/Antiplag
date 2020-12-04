@@ -16,6 +16,8 @@ from pycontractions import Contractions
 from textblob import TextBlob
 import textract
 import os
+import shutil
+
 
 def text_extraction(path_to_file):
     file_name, file_extension = os.path.splitext(path_to_file)
@@ -24,7 +26,7 @@ def text_extraction(path_to_file):
         file_extension = '.txt'
         path_to_file_old = path_to_file
         path_to_file = file_name + file_extension
-        os.rename(path_to_file_old, path_to_file)
+        shutil.copyfile(path_to_file_old, path_to_file)
 
     text_string = textract.process(path_to_file).decode()
     return text_string
