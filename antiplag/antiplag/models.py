@@ -62,3 +62,21 @@ class Document(models.Model):
     def process_raw_text(self, text_raw):
         # Replace with actual process raw text method.
         return text_raw
+
+class Match(models.Model):
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    percentage = models.DecimalField(max_digits=5, decimal_places=2)
+    char_from = models.PositiveIntegerField()
+    char_to = models.PositiveIntegerField()
+
+class Result(models.Model):
+
+    class ResultStatus(models.TextChoices):
+        PASS = "P"
+        FAIL = "F"
+
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    percentage = models.DecimalField(max_digits=5, decimal_places=2)
+    matches = models.ForeignKey(Match, on_delete=models.CASCADE)
+    result = models.CharField(max_length=1, choices=ResultStatus.choices)
+    error_msg = models.TextField(null=False)
