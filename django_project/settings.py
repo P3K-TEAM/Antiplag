@@ -138,3 +138,5 @@ ELASTICSEARCH_DSL = {
         'hosts': env("ELASTIC_HOST")
     },
 }
+
+TESSERACT_PATH = env("TESSERACT_PATH")

@@ -17,6 +17,10 @@ from textblob import TextBlob
 import textract
 import os
 import shutil
+import pytesseract
+from PIL import Image
+
+from django.conf import settings
 
 
 def extract_text_from_file(filepath):
@@ -32,6 +36,13 @@ def extract_text_from_file(filepath):
         text_string = textract.process(filepath).decode()
 
     return text_string
+
+
+def text_extraction_from_image(path_to_image):
+    pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT_PATH
+    image = Image.open(path_to_image)
+    text = pytesseract.image_to_string(image)
+    return text
 
 
 def preprocess_text(text, strip_html_tags=True, remove_extra_whitespace=True, remove_accented_chars=False,
