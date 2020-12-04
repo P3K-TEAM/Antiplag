@@ -9,12 +9,11 @@ def generate_result(document, elastic_result):
     #up to 10 documents from elastic
     corpus = document
     corpus.append(elactic_result)
-    result_json = text_comparison(document, corpus)
-    result = json.loads(result_json)
+    try:
+        result_json = text_comparison(document, corpus)
+    except:
+        antiplag_result = Result(document_id=document, error_msg="Comparison failed")
+        aantiplag_result.save()
 
-    # Creating database records
-    for x in result.items():
-        if isinstance(x, dict):
-            for doc in x.items():
-                antiplag_result = Result(percentage=doc[percentage] ,result='P',document_id=doc)
-                antiplag_result.save()
+    antiplag_result = Result(document_id=document, matched_docs=result_json)
+    aantiplag_result.save()
