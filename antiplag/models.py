@@ -22,7 +22,7 @@ class Document(models.Model):
 
     def get_file_path(self, filename):
         ext = filename.split(".")[-1]
-        filename = "%s.%s" % (uuid.uuid4(), ext)
+        filename = filename.split(".")[0] + "XXX" + "%s.%s" % (uuid.uuid4(), ext)
         return os.path.join("documents/", filename)
 
     class DocumentType(models.TextChoices):
@@ -50,7 +50,7 @@ class Document(models.Model):
 
         language = cls.detect_language(text)
 
-        document = cls(file=file, submission=submission, text=text, text_raw=text_raw, type=type, language=language)
+        document = cls.objects.create(file=file, submission=submission, text=text, text_raw=text_raw, type=type, language=language)
         document = document.save() if save else document
         # TODO: Add document to elastic
         return document
