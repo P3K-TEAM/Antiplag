@@ -1,27 +1,58 @@
-# Antiplag backend
-## Configuring your development
-### virtualenv
-Create your own virtual env that uses Python 3.8
+# AntiPlag - Backend
 
-### Requirements
-Install all requirements from requirements.txt
+# Prerequisites
+ - [Python ^3.0](https://www.python.org/downloads/) 
+ - [Pip](https://pypi.org/project/pip/) 
+ - [Pipenv](https://pypi.org/project/pipenv/)
 
-```pip install -r antiplag/requirements.txt```
+## Installation
 
-### Enviroment variables
-Create your own `.env` file in folder with `manage.py`.
+1. Install all dependencies using
+
+    ```
+    pipenv install
+    ```
  
-Configure `.env` file by following `.env.example`. Don't forget to specify the database connection url.
+## Configuration
 
-### Run migrations
-To create all necessary tables in database, run:
+1. Activate virtual environment
 
-```python antiplag/manage.py migrate```
+   ```
+   pipenv shell
+   ```
 
-### Run local development server
-```python antiplag/manage.py runserver```
+1. Set your environment variables
+    
+    Create your own `.env` file in root similar to `.env.example`
 
-## Code formatting
-Before committing, format code using `black` formater:
+1. Run database migrations
+    
+    1. Have your database server running first (If you're having troubles with this step, check our [Setting up PostgreSQL with Docker docs](docs/SETUP_DOCKER_DATABASE.md))
+    1. Setup database credentials to `DATABASE_URL` variable in `.env` file in following format:
+        
+       ```
+       postgresql://<user>:<password>@<hostname>:<port>/<database>
+       ```
+     
+    1. To create all necessary tables in database, run
+        
+        ```
+        python manage.py migrate
+        ```
 
-```black .```
+## Usage
+
+1. Activate virtual environment
+
+   ```
+   pipenv shell
+   ```
+
+1. Run local development server 
+    ```
+    python manage.py runserver
+    ```
+
+## Guides
+
+- To find out how to format code in this repository, please read our [code formatting docs](docs/CODE_FORMATTING.md)
