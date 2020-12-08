@@ -1,14 +1,11 @@
-from django.shortcuts import render
 from .models import Submission, Document
 from .serializers import SubmissionSerializer, DocumentSerializer
-from django.http import Http404
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import mixins
 from rest_framework import generics
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from rest_framework.views import APIView
-import json
 from .constants import *
 
 
@@ -36,16 +33,18 @@ class FileDetail(APIView):
 
             if CONTENT_TYPE_FILE in request.content_type:
                 for file in request.FILES.getlist("files"):
-                    document = Document.create_and_process_text(file=file)
+                    Document.create_and_process_text(file=file)
                 return Response(SubmissionSerializer(submission).data, status=status.HTTP_201_CREATED)
 
             elif CONTENT_TYPE_TEXT in request.content_type:
-                document = Document.create_and_process_text(submission=submission, text_raw=request.POST.get('text', "no_text_attribute"))
+                Document.create_and_process_text(
+                    submission=submission,
+                    text_raw=request.POST.get('text', "no_text_attribute")
+                )
                 return Response(SubmissionSerializer(submission).data, status=status.HTTP_200_OK)
 
             else:
-                return Response( status=status.HTTP_400_BAD_REQUEST)
-
+                return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class FileLitsMixin(

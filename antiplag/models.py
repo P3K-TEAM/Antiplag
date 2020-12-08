@@ -6,7 +6,6 @@ from langdetect import detect
 
 
 class Submission(models.Model):
-
     class SubmissionStatus(models.TextChoices):
         PENDING = "PND"
         PROCESSING = "PRG"
@@ -50,7 +49,14 @@ class Document(models.Model):
 
         language = cls.detect_language(text)
 
-        document = cls.objects.create(file=file, submission=submission, text=text, text_raw=text_raw, type=type, language=language)
+        document = cls.objects.create(
+            file=file,
+            submission=submission,
+            text=text,
+            text_raw=text_raw,
+            type=type,
+            language=language
+        )
         document = document.save() if save else document
         # TODO: Add document to elastic
         return document
@@ -72,8 +78,8 @@ class Document(models.Model):
     def detect_language(text_raw):
         return detect(text_raw)
 
-class Result(models.Model):
 
+class Result(models.Model):
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
     matched_docs = models.JSONField()
     error_msg = models.TextField(null=False)
