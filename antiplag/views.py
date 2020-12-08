@@ -34,12 +34,12 @@ class FileDetail(APIView):
         if submission_serializer.is_valid():
             submission = submission_serializer.save()
 
-            if request.content_type == CONTENT_TYPE_FILE:
+            if CONTENT_TYPE_FILE in request.content_type:
                 for file in request.FILES.getlist("files"):
                     document = Document.create_and_process_text(file=file)
                 return Response(SubmissionSerializer(submission).data, status=status.HTTP_201_CREATED)
 
-            elif request.content_type == CONTENT_TYPE_TEXT:
+            elif CONTENT_TYPE_TEXT in request.content_type:
                 document = Document.create_and_process_text(submission=submission, text_raw=request.POST.get('text', "no_text_attribute"))
                 return Response(SubmissionSerializer(submission).data, status=status.HTTP_200_OK)
 
