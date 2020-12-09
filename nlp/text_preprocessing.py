@@ -19,19 +19,20 @@ import os
 import shutil
 
 
-def text_extraction(path_to_file):
-    file_name, file_extension = os.path.splitext(path_to_file)
+def extract_text_from_file(filepath):
+    file_name, file_extension = os.path.splitext(filepath)
 
     if file_extension == '.srt' or file_extension == '.md':
         path_to_file_new = file_name + '.txt'
-        shutil.copyfile(path_to_file, path_to_file_new)
+        shutil.copyfile(filepath, path_to_file_new)
         text_string = textract.process(path_to_file_new).decode()
         os.remove(path_to_file_new)
 
     else:
-        text_string = textract.process(path_to_file).decode()
+        text_string = textract.process(filepath).decode()
 
     return text_string
+
 
 def preprocess_text(text, strip_html_tags=True, remove_extra_whitespace=True, remove_accented_chars=False,
                     expand_contractions=False, remove_punctuation=True, lowercase_text=True, words_to_numbers=False,
