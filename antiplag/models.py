@@ -62,7 +62,7 @@ class Document(models.Model):
         return document
 
     def __str__(self):
-        return f"document-{self.id}-{self.type}"
+        return f"document-{self.id}-{self.type.label}"
 
     @staticmethod
     def process_file(file):
