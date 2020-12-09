@@ -154,5 +154,9 @@ dmypy.json
 
 # End of https://www.toptal.com/developers/gitignore/api/django
 
+# IDE's
 .vscode
 .idea
+
+# Platform specific
+.DS_Store
