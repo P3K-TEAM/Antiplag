@@ -16,30 +16,15 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from django.conf.urls import url
 from django.conf import settings
 from django.conf.urls.static import static
 
+from antiplag.views import FileDetail
 
 urlpatterns = [
-    path('', include('antiplag.urls')),
-    url(r'^file/', include('antiplag.urls')),
+    path("upload/", FileDetail().as_view(), name="upload"),
     path('admin/', admin.site.urls),
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-"""
-
-from django.urls import include, path
-from rest_framework import routers
-from antiplag import views
-
-router = routers.DefaultRouter()
-router.register(r'file', views.FileViewSet, basename='file')
-
-urlpatterns = [
-    #path('admin/', admin.site.urls),
-	path('upload/', include(router.urls)),
-]
-"""
