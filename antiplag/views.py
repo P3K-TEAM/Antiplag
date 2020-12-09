@@ -1,11 +1,12 @@
-from .models import Submission, Document
-from .serializers import SubmissionSerializer, DocumentSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import mixins
 from rest_framework import generics
-from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
+
+from .serializers import SubmissionSerializer, DocumentSerializer
+from .models import Submission, Document
 from .constants import *
 
 
@@ -42,7 +43,7 @@ class FileDetail(APIView):
             elif CONTENT_TYPE_TEXT in request.content_type:
                 Document.create_and_process_text(
                     submission=submission,
-                    text_raw=request.POST.get('text', "no_text_attribute")
+                    text_raw=request.body.decode()
                 )
                 return Response(SubmissionSerializer(submission).data, status=status.HTTP_200_OK)
 
