@@ -1,13 +1,13 @@
-from django.shortcuts import render
-from .models import Submission, Document
-from .serializers import SubmissionSerializer, DocumentSerializer
-from django.http import Http404
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import mixins
 from rest_framework import generics
-from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
+
+from .serializers import SubmissionSerializer, DocumentSerializer
+from .models import Submission, Document
+from .constants import *
 
 
 class FileList(APIView):
@@ -28,49 +28,30 @@ class FileDetail(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, *args, **kwargs):
-
-        submission_serializer = SubmissionSerializer(data=request.data)
+        submission_serializer = SubmissionSerializer(data={"status": Submission.SubmissionStatus.PENDING})
         if submission_serializer.is_valid():
             submission = submission_serializer.save()
-            for file in request.FILES.getlist("files"):
-                doc_serializer = DocumentSerializer(data={"file": file})
-                if doc_serializer.is_valid():
-                    document = doc_serializer.save()
-                    document.submission = submission
-                    document.save()
 
-            return Response(
-                SubmissionSerializer(submission).data, status=status.HTTP_201_CREATED
-            )
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            if CONTENT_TYPE_FILE in request.content_type:
+                for file in request.FILES.getlist("files"):
+                    Document.create_and_process_text(
+                        submission=submission,
+                        file=file
+                    )
+                return Response(SubmissionSerializer(submission).data, status=status.HTTP_201_CREATED)
 
-    def get_object(self, pk):
-        try:
-            return Document.objects.get(pk=pk)
-        except Document.DoesNotExist:
-            raise Http404
+            elif CONTENT_TYPE_TEXT in request.content_type:
+                Document.create_and_process_text(
+                    submission=submission,
+                    text_raw=request.body.decode()
+                )
+                return Response(SubmissionSerializer(submission).data, status=status.HTTP_200_OK)
 
-    def get(self, request, pk, format=None):
-        document = self.get_object(pk)
-        serializer = DocumentSerializer(document)
-        return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-        document = self.get_object(pk)
-        serializer = DocumentSerializer(document, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        document = self.get_object(pk)
-        document.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class FileLitsMixin(
+class FileListMixin(
     mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
 ):
     queryset = Document.objects.all()
