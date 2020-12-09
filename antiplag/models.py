@@ -20,9 +20,8 @@ class Submission(models.Model):
 class Document(models.Model):
 
     def get_file_path(self, filename):
-        ext = filename.split(".")[-1]
-        filename = filename.split(".")[0] + "XXX" + "%s.%s" % (uuid.uuid4(), ext)
-        print("Filename: ",filename)
+        filebase, ext = filename.split(".")
+        filename = f"{filebase}-{str(uuid.uuid4())[:8]}.{ext}"
         return os.path.join("documents/", filename)
 
     class DocumentType(models.TextChoices):
@@ -39,7 +38,7 @@ class Document(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     @classmethod
-    def create_and_process_text(cls, submission=None, text_raw=None, file=None, save=True):
+    def create_and_process_text(cls, submission=None, text_raw=None, file=None):
         if file:
             text_raw = cls.process_file(file)
         if not text_raw:
@@ -58,8 +57,8 @@ class Document(models.Model):
             type=type,
             language=language
         )
-        document = document.save() if save else document
-        # TODO: Add document to elastic
+        document = document.save()
+
         return document
 
     def __str__(self):
