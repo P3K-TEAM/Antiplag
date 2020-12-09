@@ -33,7 +33,10 @@ class FileDetail(APIView):
 
             if CONTENT_TYPE_FILE in request.content_type:
                 for file in request.FILES.getlist("files"):
-                    Document.create_and_process_text(file=file)
+                    Document.create_and_process_text(
+                        submission=submission,
+                        file=file
+                    )
                 return Response(SubmissionSerializer(submission).data, status=status.HTTP_201_CREATED)
 
             elif CONTENT_TYPE_TEXT in request.content_type:
