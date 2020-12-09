@@ -4,6 +4,7 @@
  - [Python ^3.0](https://www.python.org/downloads/) 
  - [Pip](https://pypi.org/project/pip/) 
  - [Pipenv](https://pypi.org/project/pipenv/)
+ - [Tesseract](https://digi.bib.uni-mannheim.de/tesseract/) - for more info read our [OCR docs](docs/OPTICAL_TEXT_RECOGNITION.md)
 
 ## Installation
 

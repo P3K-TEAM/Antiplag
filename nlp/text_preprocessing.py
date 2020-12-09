@@ -17,6 +17,10 @@ from textblob import TextBlob
 import textract
 import os
 import shutil
+import pytesseract
+from PIL import Image, UnidentifiedImageError
+
+from django.conf import settings
 
 
 def extract_text_from_file(filepath):
@@ -29,9 +33,19 @@ def extract_text_from_file(filepath):
         os.remove(path_to_file_new)
 
     else:
-        text_string = textract.process(filepath).decode()
+        try:
+            Image.open(filepath).verify()
+            text_string = extract_text_from_image(filepath)
+        except UnidentifiedImageError:
+            text_string = textract.process(filepath).decode()
 
     return text_string
+
+
+def extract_text_from_image(filepath):
+    pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT_PATH
+    image = Image.open(filepath)
+    return pytesseract.image_to_string(image)
 
 
 def preprocess_text(text, strip_html_tags=True, remove_extra_whitespace=True, remove_accented_chars=False,
