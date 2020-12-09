@@ -51,7 +51,7 @@ class FileDetail(APIView):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class FileLitsMixin(
+class FileListMixin(
     mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
 ):
     queryset = Document.objects.all()
