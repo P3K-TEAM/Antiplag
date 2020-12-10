@@ -15,8 +15,6 @@ import string
 from pycontractions import Contractions
 from textblob import TextBlob
 import textract
-import os
-import shutil
 import pytesseract
 from PIL import Image, UnidentifiedImageError
 
@@ -24,20 +22,11 @@ from django.conf import settings
 
 
 def extract_text_from_file(filepath):
-    file_name, file_extension = os.path.splitext(filepath)
-
-    if file_extension == '.srt' or file_extension == '.md':
-        path_to_file_new = file_name + '.txt'
-        shutil.copyfile(filepath, path_to_file_new)
-        text_string = textract.process(path_to_file_new).decode()
-        os.remove(path_to_file_new)
-
-    else:
-        try:
-            Image.open(filepath).verify()
-            text_string = extract_text_from_image(filepath)
-        except UnidentifiedImageError:
-            text_string = textract.process(filepath).decode()
+    try:
+        Image.open(filepath).verify()
+        text_string = extract_text_from_image(filepath)
+    except UnidentifiedImageError:
+        text_string = textract.process(filepath).decode()
 
     return text_string
 
