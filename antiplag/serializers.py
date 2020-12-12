@@ -41,8 +41,13 @@ class DocumentResultSummarySerializer(serializers.ModelSerializer):
 
 
 class SubmissionDetailSerializer(serializers.ModelSerializer):
-    documents = DocumentResultSummarySerializer(many=True)
+    documents = serializers.SerializerMethodField()
 
     class Meta:
         model = Submission
         fields = ('status', 'documents')
+
+    def get_documents(self, obj):
+        if obj.status == Submission.SubmissionStatus.PROCESSED:
+            documents = obj.documents.all()
+            return DocumentResultSummarySerializer(documents, many=True).data
