@@ -72,7 +72,7 @@ class Document(models.Model):
 
 
 class Result(models.Model):
-    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='result')
+    document = models.OneToOneField(Document, on_delete=models.CASCADE, related_name='result')
     matched_docs = models.JSONField()
     percentage = models.FloatField(default=0)
 
