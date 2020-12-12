@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Submission, Document
+from .models import Submission, Document, Result
 
 
 class SubmissionSerializer(serializers.ModelSerializer):
@@ -25,10 +25,19 @@ class DocumentSerializer(serializers.ModelSerializer):
         )
 
 
+class ResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Result
+        fields = ("id", "percentage", 'error_msg')
+
+
 class DocumentResultSummarySerializer(serializers.ModelSerializer):
+    percentage = serializers.ReadOnlyField(source='result.get.percentage')
+    matches = serializers.ReadOnlyField(source='result.get.matches')
+
     class Meta:
         model = Document
-        fields = ("id", "name")
+        fields = ("id", "name", 'matches', 'percentage')
 
 
 class SubmissionDetailSerializer(serializers.ModelSerializer):
