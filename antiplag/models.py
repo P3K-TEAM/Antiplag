@@ -24,7 +24,7 @@ class Document(models.Model):
 
     file = models.FileField(upload_to='documents/', null=True)
     name = models.CharField(max_length=255, null=True)
-    submission = models.ForeignKey(Submission, on_delete=models.CASCADE, null=True)
+    submission = models.ForeignKey(Submission, on_delete=models.CASCADE, null=True, related_name='documents')
     text = models.TextField(null=True)
     text_raw = models.TextField(null=True)
     type = models.CharField(max_length=4, choices=DocumentType.choices)

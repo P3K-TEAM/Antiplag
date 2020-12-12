@@ -4,4 +4,5 @@ from . import views
 
 urlpatterns = [
     path('submissions/', views.SubmissionList.as_view()),
+    path('submissions/<int:id>', views.SubmissionDetail.as_view()),
 ]

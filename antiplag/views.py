@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -52,3 +53,11 @@ class SubmissionList(APIView):
             )
 
         return Response(self.serializer_class(submission).data, status=status.HTTP_201_CREATED)
+
+
+class SubmissionDetail(APIView):
+    serializer_class = serializers.SubmissionDetailSerializer
+
+    def get(self, request, id):
+        submission = get_object_or_404(Submission, pk=id)
+        return Response(self.serializer_class(instance=submission).data)
