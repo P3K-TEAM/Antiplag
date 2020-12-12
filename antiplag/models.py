@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-import uuid
-import os
 from langdetect import detect
+
 from nlp.text_preprocessing import extract_text_from_file
 
 
@@ -19,17 +18,11 @@ class Submission(models.Model):
 
 
 class Document(models.Model):
-
-    def get_file_path(self, filename):
-        filebase, ext = filename.split(".")
-        filename = f"{filebase}-{str(uuid.uuid4())[:8]}.{ext}"
-        return os.path.join("documents/", filename)
-
     class DocumentType(models.TextChoices):
         FILE = "FILE"
         TEXT = "TEXT"
 
-    file = models.FileField(upload_to=get_file_path, null=True)
+    file = models.FileField(upload_to='documents/', null=True)
     submission = models.ForeignKey(Submission, on_delete=models.CASCADE, null=True)
     text = models.TextField(null=True)
     text_raw = models.TextField(null=True)

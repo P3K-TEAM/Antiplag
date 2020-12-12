@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
             name='Document',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(null=True, upload_to=antiplag.models.Document.get_file_path)),
+                ('file', models.FileField(null=True, upload_to='documents/')),
                 ('text', models.TextField()),
                 ('text_raw', models.TextField()),
                 ('type', models.CharField(choices=[('F', 'File'), ('T', 'Text')], max_length=1)),

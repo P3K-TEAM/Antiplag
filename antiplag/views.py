@@ -27,7 +27,7 @@ class FileList(APIView):
 class FileDetail(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         submission_serializer = SubmissionSerializer(data={"status": Submission.SubmissionStatus.PENDING})
 
         if submission_serializer.is_valid():
