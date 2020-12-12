@@ -3,37 +3,52 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 
-from .serializers import SubmissionSerializer
+from . import serializers
 from .models import Submission, Document
 from .constants import *
 
 
 class SubmissionList(APIView):
+    serializer_class = serializers.SubmissionSerializer
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
-        submission_serializer = SubmissionSerializer(data={"status": Submission.SubmissionStatus.PENDING})
 
-        if submission_serializer.is_valid():
-            submission = submission_serializer.save()
+        # TODO: Do not create save the submission to the DB unless all conditions are passing
 
-            is_file = CONTENT_TYPE_FILE in request.content_type
-            is_text = CONTENT_TYPE_TEXT in request.content_type
+        # create new submission
+        submission = Submission.objects.create(
+            status=Submission.SubmissionStatus.PENDING
+        )
 
-            if not (is_file or is_text):
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+        # check for request content type
+        is_file = CONTENT_TYPE_FILE in request.content_type
+        is_text = CONTENT_TYPE_TEXT in request.content_type
 
-            if is_file:
-                for file in request.FILES.getlist("files"):
-                    Document.create_and_process_text(
-                        submission=submission,
-                        file=file
-                    )
+        if not (is_file or is_text):
+            return Response({'error': 'Unsupported Content-Type header'}, status=status.HTTP_400_BAD_REQUEST)
 
-            else:
+        if is_file:
+            files = request.FILES.getlist("files")
+
+            if not files:
+                return Response({'error': 'No files present'}, status=status.HTTP_400_BAD_REQUEST)
+
+            for file in files:
                 Document.create_and_process_text(
                     submission=submission,
-                    text_raw=request.body.decode()
+                    file=file
                 )
 
-            return Response(SubmissionSerializer(submission).data, status=status.HTTP_201_CREATED)
+        else:
+            text_raw = request.body.decode()
+
+            if not text_raw.strip():
+                return Response({'error': 'No text was specified'}, status=status.HTTP_400_BAD_REQUEST)
+
+            Document.create_and_process_text(
+                submission=submission,
+                text_raw=text_raw
+            )
+
+        return Response(self.serializer_class(submission).data, status=status.HTTP_201_CREATED)
