@@ -19,11 +19,9 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-from antiplag.views import FileDetail
-
 urlpatterns = [
-    path("upload/", FileDetail().as_view(), name="upload"),
     path('admin/', admin.site.urls),
+    path('api/', include('antiplag.urls')),
 ]
 
 if settings.DEBUG:

@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-import uuid
-import os
 from langdetect import detect
+
 from nlp.text_preprocessing import extract_text_from_file
 
 
@@ -17,20 +16,18 @@ class Submission(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"Submission {self.id} ({self.status})"
+
 
 class Document(models.Model):
-
-    def get_file_path(self, filename):
-        filebase, ext = filename.split(".")
-        filename = f"{filebase}-{str(uuid.uuid4())[:8]}.{ext}"
-        return os.path.join("documents/", filename)
-
     class DocumentType(models.TextChoices):
         FILE = "FILE"
         TEXT = "TEXT"
 
-    file = models.FileField(upload_to=get_file_path, null=True)
-    submission = models.ForeignKey(Submission, on_delete=models.CASCADE, null=True)
+    file = models.FileField(upload_to='documents/', null=True)
+    name = models.CharField(max_length=255, blank=True)
+    submission = models.ForeignKey(Submission, on_delete=models.CASCADE, null=True, related_name='documents')
     text = models.TextField(null=True)
     text_raw = models.TextField(null=True)
     type = models.CharField(max_length=4, choices=DocumentType.choices)
@@ -43,6 +40,7 @@ class Document(models.Model):
         # save the model
         document = cls.objects.create(
             file=file,
+            name=file.name if file else "",
             submission=submission,
             type=cls.DocumentType.FILE if file else cls.DocumentType.TEXT,
             language=cls.detect_language(text_raw) if text_raw else None,
@@ -59,7 +57,7 @@ class Document(models.Model):
         document.save()
 
     def __str__(self):
-        return f"document-{self.id}-{self.type.label}"
+        return f"{self.name if self.name else f'Document {self.id}'} ({self.type})"
 
     def process_file(self):
         return extract_text_from_file(self.file.path)
@@ -74,6 +72,12 @@ class Document(models.Model):
 
 
 class Result(models.Model):
-    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='result')
     matched_docs = models.JSONField()
-    error_msg = models.TextField(null=False)
+    percentage = models.FloatField(default=0)
+
+    def __str__(self):
+        return f"{self.document}"
+
+    def matches(self):
+        return len(self.matched_docs)
