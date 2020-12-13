@@ -67,6 +67,23 @@ class SubmissionDetail(APIView):
 
         # in case the submission is processed, include the documents
         if submission.status == Submission.SubmissionStatus.PROCESSED:
-            data['documents'] = serializers.DocumentResultSerializer(submission.documents.all(), many=True).data
+            data['documents'] = serializers.DocumentDetailedSerializer(submission.documents.all(), many=True).data
 
         return Response(data=data)
+
+
+class DocumentDetail(APIView):
+    serializer_class = serializers.DocumentResultSerializer
+
+    def get(self, request, id):
+        document = get_object_or_404(Document, pk=id)
+
+        if document.submission.status == Submission.SubmissionStatus.PROCESSED:
+            return Response({
+                'document': self.serializer_class(instance=document).data,
+                'submission_id': document.submission.id,
+                'is_multiple': document.submission.documents.count() > 1
+            })
+        else:
+            # unprocessed submission documents should 'not exist' for the user
+            return Response(status=status.HTTP_404_NOT_FOUND)
