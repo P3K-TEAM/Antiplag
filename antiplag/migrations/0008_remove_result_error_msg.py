@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('antiplag', '0007_auto_20201213_1339'),
+        ("antiplag", "0007_auto_20201213_1339"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='result',
-            name='error_msg',
+            model_name="result",
+            name="error_msg",
         ),
     ]

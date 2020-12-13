@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "django_elasticsearch_dsl",
-
     # Our apps
     "antiplag",
 ]

@@ -7,13 +7,17 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('antiplag', '0008_remove_result_error_msg'),
+        ("antiplag", "0008_remove_result_error_msg"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='result',
-            name='document',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='result', to='antiplag.document'),
+            model_name="result",
+            name="document",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="result",
+                to="antiplag.document",
+            ),
         ),
     ]

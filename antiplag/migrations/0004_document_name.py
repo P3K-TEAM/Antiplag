@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('antiplag', '0003_auto_20201209_2040'),
+        ("antiplag", "0003_auto_20201209_2040"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='document',
-            name='name',
+            model_name="document",
+            name="name",
             field=models.CharField(max_length=255, null=True),
         ),
     ]

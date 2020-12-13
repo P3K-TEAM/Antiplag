@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('antiplag', '0002_auto_20201209_1051'),
+        ("antiplag", "0002_auto_20201209_1051"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='document',
-            name='language',
+            model_name="document",
+            name="language",
             field=models.CharField(max_length=100, null=True),
         ),
         migrations.AlterField(
-            model_name='document',
-            name='text',
+            model_name="document",
+            name="text",
             field=models.TextField(null=True),
         ),
         migrations.AlterField(
-            model_name='document',
-            name='text_raw',
+            model_name="document",
+            name="text_raw",
             field=models.TextField(null=True),
         ),
     ]
