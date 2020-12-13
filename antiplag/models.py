@@ -75,7 +75,6 @@ class Result(models.Model):
     document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='result')
     matched_docs = models.JSONField()
     percentage = models.FloatField(default=0)
-    error_msg = models.TextField(null=True)
 
     def __str__(self):
         return f"{self.document}"
