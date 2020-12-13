@@ -1,11 +1,24 @@
+from collections import OrderedDict
 from rest_framework import serializers
 from .models import Submission, Document, Result
+
+
+class NonNullModelSerializer(serializers.ModelSerializer):
+    """
+    Removes null fields from response
+    https://stackoverflow.com/questions/27015931/remove-null-fields-from-django-rest-framework-response
+    Slightly modified for empty strings
+    """
+
+    def to_representation(self, instance):
+        result = super(NonNullModelSerializer, self).to_representation(instance)
+        return OrderedDict([(key, result[key]) for key in result if result[key] is not None and result[key] != ""])
 
 
 class SubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Submission
-        fields = ("id", "status", "created_at", "updated_at")
+        fields = ["status"]
 
 
 class DocumentSerializer(serializers.ModelSerializer):
@@ -25,13 +38,7 @@ class DocumentSerializer(serializers.ModelSerializer):
         )
 
 
-class ResultSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Result
-        fields = ("id", "percentage", 'error_msg')
-
-
-class DocumentResultSummarySerializer(serializers.ModelSerializer):
+class DocumentResultSerializer(NonNullModelSerializer, serializers.ModelSerializer):
     percentage = serializers.ReadOnlyField(source='result.get.percentage')
     matches = serializers.ReadOnlyField(source='result.get.matches')
 
@@ -40,14 +47,7 @@ class DocumentResultSummarySerializer(serializers.ModelSerializer):
         fields = ("id", "name", 'matches', 'percentage')
 
 
-class SubmissionDetailSerializer(serializers.ModelSerializer):
-    documents = serializers.SerializerMethodField()
-
+class ResultSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Submission
-        fields = ('status', 'documents')
-
-    def get_documents(self, obj):
-        if obj.status == Submission.SubmissionStatus.PROCESSED:
-            documents = obj.documents.all()
-            return DocumentResultSummarySerializer(documents, many=True).data
+        model = Result
+        fields = ("id", "percentage", 'error_msg')

@@ -56,8 +56,17 @@ class SubmissionList(APIView):
 
 
 class SubmissionDetail(APIView):
-    serializer_class = serializers.SubmissionDetailSerializer
+    serializer_class = serializers.SubmissionSerializer
 
     def get(self, request, id):
         submission = get_object_or_404(Submission, pk=id)
-        return Response(self.serializer_class(instance=submission).data)
+
+        data = {
+            **self.serializer_class(instance=submission).data,
+        }
+
+        # in case the submission is processed, include the documents
+        if submission.status == Submission.SubmissionStatus.PROCESSED:
+            data['documents'] = serializers.DocumentResultSerializer(submission.documents.all(), many=True).data
+
+        return Response(data=data)
