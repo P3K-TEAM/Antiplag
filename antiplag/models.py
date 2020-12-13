@@ -26,7 +26,7 @@ class Document(models.Model):
         TEXT = "TEXT"
 
     file = models.FileField(upload_to='documents/', null=True)
-    name = models.CharField(max_length=255, null=True)
+    name = models.CharField(max_length=255, blank=True)
     submission = models.ForeignKey(Submission, on_delete=models.CASCADE, null=True, related_name='documents')
     text = models.TextField(null=True)
     text_raw = models.TextField(null=True)
@@ -40,7 +40,7 @@ class Document(models.Model):
         # save the model
         document = cls.objects.create(
             file=file,
-            name=file.name if file else None,
+            name=file.name if file else "",
             submission=submission,
             type=cls.DocumentType.FILE if file else cls.DocumentType.TEXT,
             language=cls.detect_language(text_raw) if text_raw else None,
