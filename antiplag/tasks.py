@@ -16,8 +16,9 @@ def compare_documents(submission_id):
     Compare given documents against each other and N most similar documents from elastic
     """
 
-    submission = Submission.objects.get(id=submission_id)
-    if submission is None:
+    try:
+        submission = Submission.objects.get(id=submission_id)
+    except:
         return
 
     submission.status = Submission.SubmissionStatus.PROCESSING
@@ -37,6 +38,7 @@ def compare_documents(submission_id):
         user_documents.remove(doc)
 
         result_similarity = 0
+        compared_count = 0
 
         results = []
         # Compare current document with elastic docs
@@ -45,10 +47,12 @@ def compare_documents(submission_id):
             try:
                 # returns percentage representing how similar docs are
                 similarity = text_comparison(doc.text, similar_doc["text"])
+
                 result_similarity += similarity
+                compared_count += 1
             except:
+                # TODO: Should uncomparable documents be included?
                 similarity = None
-                result_similarity += 1
 
             if similarity > THRESHOLD:
                 results.append({"name": similar_doc["name"], "percentage": similarity})
@@ -58,14 +62,16 @@ def compare_documents(submission_id):
             try:
                 # returns percentage representing how similar docs are
                 similarity = text_comparison(doc.text, user_doc.text)
+
                 result_similarity += similarity
+                compared_count += 1
             except:
+                # TODO: Should uncomparable documents be included?
                 similarity = None
-                result_similarity += 1
 
             results.append({"name": str(user_doc), "percentage": similarity})
 
-        result_similarity /= len(user_documents) + len(similar_documents)
+        result_similarity /= compared_count
         Result.objects.create(
             document=doc, matched_docs=results, percentage=result_similarity
         )
