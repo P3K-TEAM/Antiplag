@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from . import serializers
 from .models import Submission, Document
 from .constants import *
+from .tasks import compare_documents
 
 
 class SubmissionList(APIView):
@@ -27,32 +28,39 @@ class SubmissionList(APIView):
         is_text = CONTENT_TYPE_TEXT in request.content_type
 
         if not (is_file or is_text):
-            return Response({'error': 'Unsupported Content-Type header'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Unsupported Content-Type header"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         if is_file:
             files = request.FILES.getlist("files")
 
             if not files:
-                return Response({'error': 'No files present'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"error": "No files present"}, status=status.HTTP_400_BAD_REQUEST
+                )
 
             for file in files:
-                Document.create_and_process_text(
-                    submission=submission,
-                    file=file
-                )
+                Document.create_and_process_text(submission=submission, file=file)
 
         else:
             text_raw = request.body.decode()
 
             if not text_raw.strip():
-                return Response({'error': 'No text was specified'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"error": "No text was specified"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
-            Document.create_and_process_text(
-                submission=submission,
-                text_raw=text_raw
-            )
+            Document.create_and_process_text(submission=submission, text_raw=text_raw)
 
-        return Response(self.serializer_class(submission).data, status=status.HTTP_201_CREATED)
+        # Run background task that compares documents
+        compare_documents.delay(submission.id)
+
+        return Response(
+            self.serializer_class(submission).data, status=status.HTTP_201_CREATED
+        )
 
 
 class SubmissionDetail(APIView):
@@ -67,7 +75,9 @@ class SubmissionDetail(APIView):
 
         # in case the submission is processed, include the documents
         if submission.status == Submission.SubmissionStatus.PROCESSED:
-            data['documents'] = serializers.DocumentDetailedSerializer(submission.documents.all(), many=True).data
+            data["documents"] = serializers.DocumentDetailedSerializer(
+                submission.documents.all(), many=True
+            ).data
 
         return Response(data=data)
 
@@ -79,11 +89,13 @@ class DocumentDetail(APIView):
         document = get_object_or_404(Document, pk=id)
 
         if document.submission.status == Submission.SubmissionStatus.PROCESSED:
-            return Response({
-                'document': self.serializer_class(instance=document).data,
-                'submission_id': document.submission.id,
-                'is_multiple': document.submission.documents.count() > 1
-            })
+            return Response(
+                {
+                    "document": self.serializer_class(instance=document).data,
+                    "submission_id": document.submission.id,
+                    "is_multiple": document.submission.documents.count() > 1,
+                }
+            )
         else:
             # unprocessed submission documents should 'not exist' for the user
             return Response(status=status.HTTP_404_NOT_FOUND)

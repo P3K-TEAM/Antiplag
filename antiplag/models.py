@@ -25,9 +25,11 @@ class Document(models.Model):
         FILE = "FILE"
         TEXT = "TEXT"
 
-    file = models.FileField(upload_to='documents/', null=True)
+    file = models.FileField(upload_to="documents/", null=True)
     name = models.CharField(max_length=255, blank=True)
-    submission = models.ForeignKey(Submission, on_delete=models.CASCADE, null=True, related_name='documents')
+    submission = models.ForeignKey(
+        Submission, on_delete=models.CASCADE, null=True, related_name="documents"
+    )
     text = models.TextField(null=True)
     text_raw = models.TextField(null=True)
     type = models.CharField(max_length=4, choices=DocumentType.choices)
@@ -44,7 +46,7 @@ class Document(models.Model):
             submission=submission,
             type=cls.DocumentType.FILE if file else cls.DocumentType.TEXT,
             language=cls.detect_language(text_raw) if text_raw else None,
-            text_raw=text_raw
+            text_raw=text_raw,
         )
 
         # asynchronously extract text from file and update the model
@@ -64,7 +66,7 @@ class Document(models.Model):
 
     def process_raw_text(self):
         # Replace with actual process raw text method.
-        return 'text'
+        return self.text_raw
 
     @staticmethod
     def detect_language(text_raw):
@@ -72,12 +74,15 @@ class Document(models.Model):
 
 
 class Result(models.Model):
-    document = models.OneToOneField(Document, on_delete=models.CASCADE, related_name='result')
+    document = models.OneToOneField(
+        Document, on_delete=models.CASCADE, related_name="result"
+    )
     matched_docs = models.JSONField()
     percentage = models.FloatField(default=0)
 
     def __str__(self):
         return f"{self.document}"
 
+    @property
     def matches(self):
         return len(self.matched_docs)

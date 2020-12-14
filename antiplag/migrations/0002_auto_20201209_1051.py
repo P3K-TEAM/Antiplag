@@ -7,27 +7,50 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('antiplag', '0001_initial'),
+        ("antiplag", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='document',
-            name='type',
-            field=models.CharField(choices=[('FILE', 'File'), ('TEXT', 'Text')], max_length=4),
+            model_name="document",
+            name="type",
+            field=models.CharField(
+                choices=[("FILE", "File"), ("TEXT", "Text")], max_length=4
+            ),
         ),
         migrations.AlterField(
-            model_name='submission',
-            name='status',
-            field=models.CharField(choices=[('PENDING', 'Pending'), ('PROCESSING', 'Processing'), ('PROCESSED', 'Processed')], max_length=10),
+            model_name="submission",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("PENDING", "Pending"),
+                    ("PROCESSING", "Processing"),
+                    ("PROCESSED", "Processed"),
+                ],
+                max_length=10,
+            ),
         ),
         migrations.CreateModel(
-            name='Result',
+            name="Result",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('matched_docs', models.JSONField()),
-                ('error_msg', models.TextField()),
-                ('document', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='antiplag.document')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("matched_docs", models.JSONField()),
+                ("error_msg", models.TextField()),
+                (
+                    "document",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="antiplag.document",
+                    ),
+                ),
             ],
         ),
     ]

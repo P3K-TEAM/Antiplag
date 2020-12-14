@@ -7,13 +7,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('antiplag', '0004_document_name'),
+        ("antiplag", "0004_document_name"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='document',
-            name='submission',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='documents', to='antiplag.submission'),
+            model_name="document",
+            name="submission",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="documents",
+                to="antiplag.submission",
+            ),
         ),
     ]

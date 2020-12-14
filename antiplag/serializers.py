@@ -12,7 +12,13 @@ class NonNullModelSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         result = super(NonNullModelSerializer, self).to_representation(instance)
-        return OrderedDict([(key, result[key]) for key in result if result[key] is not None and result[key] != ""])
+        return OrderedDict(
+            [
+                (key, result[key])
+                for key in result
+                if result[key] is not None and result[key] != ""
+            ]
+        )
 
 
 class SubmissionSerializer(serializers.ModelSerializer):
@@ -34,7 +40,7 @@ class DocumentSerializer(serializers.ModelSerializer):
             "type",
             "language",
             "created_at",
-            "updated_at"
+            "updated_at",
         )
 
 
@@ -45,12 +51,12 @@ class ResultSerializer(serializers.ModelSerializer):
 
 
 class DocumentDetailedSerializer(NonNullModelSerializer, serializers.ModelSerializer):
-    percentage = serializers.ReadOnlyField(source='result.percentage')
-    matches = serializers.ReadOnlyField(source='result.matches')
+    percentage = serializers.ReadOnlyField(source="result.percentage")
+    matches = serializers.ReadOnlyField(source="result.matches")
 
     class Meta:
         model = Document
-        fields = ("id", "name", 'matches', 'percentage')
+        fields = ("id", "name", "matches", "percentage")
 
 
 class DocumentResultSerializer(serializers.ModelSerializer):
@@ -58,4 +64,4 @@ class DocumentResultSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Document
-        fields = ("name", 'result')
+        fields = ("name", "result")
