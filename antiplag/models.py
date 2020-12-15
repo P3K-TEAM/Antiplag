@@ -1,8 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from langdetect import detect
-
-from nlp.text_preprocessing import extract_text_from_file, preprocess_text
 
 
 class Submission(models.Model):
@@ -37,42 +34,8 @@ class Document(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    @classmethod
-    def create_and_process_text(cls, submission=None, text_raw=None, file=None):
-        # save the model
-        document = cls.objects.create(
-            file=file,
-            name=file.name if file else "",
-            submission=submission,
-            type=cls.DocumentType.FILE if file else cls.DocumentType.TEXT,
-            language=cls.detect_language(text_raw) if text_raw else None,
-            text_raw=text_raw,
-        )
-
-        # asynchronously extract text from file and update the model
-        if file:
-            document.text_raw = document.process_file()
-            document.save()
-
-        # asynchronously preprocess raw text and update the model
-        document.text = document.process_raw_text()
-        document.save()
-
     def __str__(self):
         return f"{self.name if self.name else f'Document {self.id}'} ({self.type})"
-
-    def process_file(self):
-        return extract_text_from_file(self.file.path)
-
-    def process_raw_text(self):
-        # TODO: Would not work in parallel
-        os.environ["w2n.lang"] = self.language
-        return preprocess_text(self.text_raw, words_to_numbers=True, remove_numbers=False, tokenize_words=False,
-                               lemmatize=False, remove_stopwords=True)
-
-    @staticmethod
-    def detect_language(text_raw):
-        return detect(text_raw)
 
 
 class Result(models.Model):

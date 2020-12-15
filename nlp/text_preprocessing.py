@@ -8,19 +8,20 @@ import inflect
 import re
 from nltk.stem.porter import PorterStemmer
 from nltk.tokenize import word_tokenize
-from nltk import pos_tag, ne_chunk
-import spacy
 import majka
 import string
 from pycontractions import Contractions
-from textblob import TextBlob
 import textract
 import pytesseract
 from PIL import Image, UnidentifiedImageError
-
 from django.conf import settings
 
 from .constants import stop_words_cz, stop_words_sk
+
+try:
+    nltk.data.find("stopwords")
+except LookupError:
+    nltk.download("stopwords")
 
 
 def extract_text_from_file(filepath):
@@ -200,7 +201,7 @@ def remove_stopwords_func(text, language):
     else:
         print("invalid language code")
 
-    return ' '.join(text)
+    return " ".join(text)
 
 
 def tokenize_words_func(text):
@@ -231,5 +232,3 @@ def lemmatize_func(word_tokens, language="sk"):
     lemmas = [morph.find(token) for token in word_tokens]
 
     return lemmas
-
-
