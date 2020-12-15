@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import unidecode
 import gensim.downloader as api
 from nltk.corpus import stopwords
-from word2number import w2n
+from word2numberi18n import w2n
 import inflect
 import re
 from nltk.stem.porter import PorterStemmer
@@ -43,7 +43,7 @@ def preprocess_text(
     text,
     strip_html_tags=True,
     remove_extra_whitespace=True,
-    remove_accented_chars=False,
+    remove_accented_chars=True,
     expand_contractions=False,
     remove_punctuation=True,
     lowercase_text=True,
@@ -63,8 +63,17 @@ def preprocess_text(
     if strip_html_tags:
         processed_text = strip_html_tags_func(processed_text)
 
-    if remove_extra_whitespace:
-        processed_text = remove_whitespaces_func(processed_text)
+    if remove_stopwords:
+        processed_text = remove_stopwords_func(processed_text, language)
+
+    if words_to_numbers:
+        processed_text = words_to_numbers_func(processed_text)
+
+    if numbers_to_words:
+        processed_text = numbers_to_words_func(processed_text)
+
+    if remove_numbers:
+        processed_text = remove_numbers_func(processed_text)
 
     if remove_accented_chars:
         processed_text = remove_accented_chars_func(processed_text)
@@ -78,17 +87,8 @@ def preprocess_text(
     if lowercase_text:
         processed_text = lowercase_text_func(processed_text)
 
-    if words_to_numbers:
-        processed_text = words_to_numbers_func(processed_text)
-
-    if numbers_to_words:
-        processed_text = numbers_to_words_func(processed_text)
-
-    if remove_numbers:
-        processed_text = remove_numbers_func(processed_text)
-
-    if remove_stopwords:
-        processed_text = remove_stopwords_func(processed_text, language)
+    if remove_extra_whitespace:
+        processed_text = remove_whitespaces_func(processed_text)
 
     if tokenize_words:
         tokenized_text = tokenize_words_func(processed_text)
@@ -102,7 +102,7 @@ def preprocess_text(
     if lemmatize:
         tokenized_text = lemmatize_func(tokenized_text)
 
-    return tokenized_text
+    return tokenized_text, processed_text
 
 
 def strip_html_tags_func(text):
@@ -200,7 +200,7 @@ def remove_stopwords_func(text, language):
     else:
         print("invalid language code")
 
-    return text
+    return ' '.join(text)
 
 
 def tokenize_words_func(text):
@@ -233,59 +233,3 @@ def lemmatize_func(word_tokens, language="sk"):
     return lemmas
 
 
-def part_of_speech_tagging_func(text):
-    result = TextBlob(text)
-
-    return result.tags
-
-
-def chunking_func(tags):
-    reg_exp = "NP: { < DT >? < JJ > * < NN >}"
-    rp = nltk.RegexpParser(reg_exp)
-    result = rp.parse(tags)
-
-    # Draw the sentence tree structure
-    # result.draw()
-
-    return result
-
-
-def chunking_with_post_func(text):
-    result = TextBlob(text)
-
-    reg_exp = "NP: { < DT >? < JJ > * < NN >}"
-    rp = nltk.RegexpParser(reg_exp)
-    result = rp.parse(result.tags)
-
-    return result
-
-
-def named_entity_recognition_func(word_tokens):
-    # part of speech tagging of words
-    word_pos = pos_tag(word_tokens)
-    # tree of word entities
-
-    return ne_chunk(word_pos)
-
-
-def coreference_resolution_func(text):
-    nlp = spacy.load("en_coref_lg")
-    doc = nlp(text)
-    if doc._.has_coref:
-        print("Given text: " + text)
-        print_mentions_func(doc)
-        print_pronoun_references_func(doc)
-
-
-def print_mentions_func(doc):
-    print("\nAll the mentions in the given text:")
-    for cluster in doc._.coref_clusters:
-        print(cluster.mentions)
-
-
-def print_pronoun_references_func(doc):
-    print("\nPronouns and their references:")
-    for token in doc:
-        if token.pos_ == "PRON" and token._.in_coref:
-            for cluster in token._.coref_clusters:
-                print(token.text + " => " + cluster.main.text)

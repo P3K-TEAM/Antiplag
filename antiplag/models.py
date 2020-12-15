@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from langdetect import detect
 
-from nlp.text_preprocessing import extract_text_from_file
+from nlp.text_preprocessing import extract_text_from_file, preprocess_text
 
 
 class Submission(models.Model):
@@ -65,8 +65,10 @@ class Document(models.Model):
         return extract_text_from_file(self.file.path)
 
     def process_raw_text(self):
-        # Replace with actual process raw text method.
-        return self.text_raw
+        # TODO: Would not work in parallel
+        os.environ["w2n.lang"] = self.language
+        return preprocess_text(self.text_raw, words_to_numbers=True, remove_numbers=False, tokenize_words=False,
+                               lemmatize=False, remove_stopwords=True)
 
     @staticmethod
     def detect_language(text_raw):
