@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from . import serializers
 from .models import Submission, Document
 from .constants import *
-from .tasks import compare_documents
+from .tasks import process_documents
 
 
 class SubmissionList(APIView):
@@ -42,7 +42,12 @@ class SubmissionList(APIView):
                 )
 
             for file in files:
-                Document.create_and_process_text(submission=submission, file=file)
+                Document.objects.create(
+                    file=file,
+                    name=file.name,
+                    submission=submission,
+                    type=Document.DocumentType.FILE,
+                )
 
         else:
             text_raw = request.body.decode()
@@ -53,10 +58,14 @@ class SubmissionList(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            Document.create_and_process_text(submission=submission, text_raw=text_raw)
+            Document.objects.create(
+                submission=submission,
+                type=Document.DocumentType.TEXT,
+                text_raw=text_raw,
+            )
 
-        # Run background task that compares documents
-        compare_documents.delay(submission.id)
+        # Run background task that processes documents
+        process_documents.delay(submission.id)
 
         return Response(
             self.serializer_class(submission).data, status=status.HTTP_201_CREATED
