@@ -61,7 +61,7 @@ def process_raw_text(text, language):
         tokenize_words=False,
         lemmatize=False,
         remove_stopwords=True,
-    )
+    )[1]
 
 
 def compare_documents(
