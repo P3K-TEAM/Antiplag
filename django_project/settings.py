@@ -17,7 +17,7 @@ from environ import Env
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = Env(DEBUG=(bool, False))
-env.read_env(env.str("./", ".env"))
+env.read_env(".env")
 
 DEBUG = env("DEBUG")
 

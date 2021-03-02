@@ -1,0 +1,45 @@
+version: "3.9"
+services:
+  broker:
+    image: rabbitmq
+    ports:
+      - "5672:5672"
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=antiplag
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - database-data:/var/lib/postgresql/data/
+
+  web:
+    build: .
+    image: antiplag/backend:v1
+    volumes:
+      - .:/backend/antiplag
+    environment:
+      - TESSERACT_PATH=/usr/bin/tesseract
+    command: pipenv run bash -c "cd antiplag && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  worker:
+    build: .
+    image: antiplag/backend:v1
+    volumes:
+      - .:/backend/antiplag
+    command: pipenv run bash -c "cd antiplag && celery -A django_project worker -l info"
+    ports:
+      - "8001:8001"
+    depends_on:
+      - db
+      - broker
+
+volumes:
+  database-data:
