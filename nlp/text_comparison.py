@@ -3,32 +3,23 @@ from sklearn.metrics.pairwise import cosine_similarity
 from nlp.greedy_string_tiling import gst
 
 
-def gst_compare_two_texts(a, b, length):
+def compare_two_texts(a, b, length):
     first_to_second = gst(a, b, length)
     second_to_first = gst(b, a, length)
-    similar_chars = 0
 
-    print(first_to_second)
-    for similarity in first_to_second:
-        similar_chars += len(similarity)
-
-    similar_chars = 0
-    print(second_to_first)
-    for similarity in second_to_first:
-        similar_chars += len(similarity)
-
-    return similar_chars / len(a), similar_chars / len(b)
+    return (first_to_second[0], round(first_to_second[1] / len(a), 3)), \
+           (second_to_first[0], round(second_to_first[1] / len(b), 3))
 
 
-def gst_compare_to_many_texts(a, files, length):
+def compare_to_many_texts(a, files, length):
     final_intervals = []
     intervals = []
     for file in files:
         gst_list = gst(a, file, length)
-        for similarity in gst_list:
+        for similarity in gst_list[0]:
             add = True
             for interval in final_intervals:
-                if similarity in interval:
+                if similarity[2] in interval[2]:
                     add = False
             if add:
                 intervals.append(similarity)
@@ -38,9 +29,9 @@ def gst_compare_to_many_texts(a, files, length):
 
     mask = len(a) * '*'
     for interval in final_intervals:
-        mask = mask[:a.find(interval)] + (len(interval) * '_') + mask[a.find(interval) + len(interval):]
+        mask = mask[:a.find(interval[2])] + (len(interval[2]) * '_') + mask[a.find(interval[2]) + len(interval[2]):]
 
-    return mask.count('_')/len(a)
+    return final_intervals, round(mask.count('_')/len(a), 3)
 
 
 def text_comparison(doc1, doc2):

@@ -21,13 +21,10 @@ def gst(text_a, text_b, min_length):
     length_of_tokens_tiled = 0
     marks_a = len(text_a) * '*'
     marks_b = len(text_b) * '*'
-    j = 0
     matches = []
     similarities = []
-    isFirst = True
     while True:
         maxmatch = min_length
-
         for p in range(0, len(text_a)):
             for t in range(0, len(text_b)):
                 j = 0
@@ -49,9 +46,9 @@ def gst(text_a, text_b, min_length):
                     for j in range(0, maxmatch):
                         marks_a = mark(list(marks_a), match[1]+j)
                         marks_b = mark(list(marks_b), match[2]+j)
-                    similarities.append(text_a[match[1]:(match[1] + maxmatch)])
+                    similarities.append((match[1], match[1] + maxmatch, text_a[match[1]:(match[1] + maxmatch)]))
                     length_of_tokens_tiled = length_of_tokens_tiled + maxmatch
 
         if maxmatch == min_length:
-            return similarities
-
+            break
+    return similarities, length_of_tokens_tiled
