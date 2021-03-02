@@ -9,6 +9,12 @@ from .models import Submission, Document
 from .constants import *
 from .tasks import process_documents
 
+# Set max file size in requests, current 20MB
+MAX_FILE_SIZE = 20*1024*1024
+
+# Set max files in a request
+MAX_FILES_PER_REQUEST = 50
+
 
 class SubmissionList(APIView):
     serializer_class = serializers.SubmissionSerializer
@@ -36,18 +42,28 @@ class SubmissionList(APIView):
         if is_file:
             files = request.FILES.getlist("files")
 
+            if len(files) > MAX_FILES_PER_REQUEST:
+                 return Response(
+                     {"error": "More than max allowed files per request"}, status=status.HTTP_400_BAD_REQUEST
+                 )
+
             if not files:
                 return Response(
                     {"error": "No files present"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
             for file in files:
-                Document.objects.create(
-                    file=file,
-                    name=file.name,
-                    submission=submission,
-                    type=Document.DocumentType.FILE,
-                )
+                if file.size < MAX_FILE_SIZE:
+                    Document.objects.create(
+                        file=file,
+                        name=file.name,
+                        submission=submission,
+                        type=Document.DocumentType.FILE,
+                        )
+                else:
+                    return Response(
+                        {"error": "File size limit breached"}, status=status.HTTP_400_BAD_REQUEST
+                     )
 
         else:
             text_raw = request.body.decode()
