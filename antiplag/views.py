@@ -9,11 +9,7 @@ from .models import Submission, Document
 from .constants import *
 from .tasks import process_documents
 
-# Set max file size in requests, current 20MB
-MAX_FILE_SIZE = 20*1024*1024
-
-# Set max files in a request
-MAX_FILES_PER_REQUEST = 50
+from django.conf import settings
 
 
 class SubmissionList(APIView):
@@ -42,7 +38,7 @@ class SubmissionList(APIView):
         if is_file:
             files = request.FILES.getlist("files")
 
-            if len(files) > MAX_FILES_PER_REQUEST:
+            if len(files) > settings.MAX_FILES_PER_REQUEST:
                  return Response(
                      {"error": "More than max allowed files per request"}, status=status.HTTP_400_BAD_REQUEST
                  )
@@ -52,18 +48,19 @@ class SubmissionList(APIView):
                     {"error": "No files present"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
+            if next((file for file in files if file.size > settings.MAX_FILE_SIZE), None) != None:
+                return Response(
+                    {"error": "File size limit breached NEW"}, status=status.HTTP_400_BAD_REQUEST
+                 )
+
             for file in files:
-                if file.size < MAX_FILE_SIZE:
-                    Document.objects.create(
-                        file=file,
-                        name=file.name,
-                        submission=submission,
-                        type=Document.DocumentType.FILE,
-                        )
-                else:
-                    return Response(
-                        {"error": "File size limit breached"}, status=status.HTTP_400_BAD_REQUEST
-                     )
+                Document.objects.create(
+                    file=file,
+                    name=file.name,
+                    submission=submission,
+                    type=Document.DocumentType.FILE,
+                )
+
 
         else:
             text_raw = request.body.decode()
