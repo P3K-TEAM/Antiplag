@@ -11,7 +11,6 @@ from .tasks import process_documents
 
 from django.conf import settings
 
-
 class SubmissionList(APIView):
     serializer_class = serializers.SubmissionSerializer
     parser_classes = (MultiPartParser, FormParser)
@@ -40,7 +39,8 @@ class SubmissionList(APIView):
 
             if len(files) > settings.MAX_FILES_PER_REQUEST:
                  return Response(
-                     {"error": "More than max allowed files per request"}, status=status.HTTP_400_BAD_REQUEST
+                     {"error": f"More than max allowed files per request submitted.  ({settings.MAX_FILES_PER_REQUEST})"},
+                     status=status.HTTP_400_BAD_REQUEST
                  )
 
             if not files:
@@ -48,9 +48,12 @@ class SubmissionList(APIView):
                     {"error": "No files present"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
-            if next((file for file in files if file.size > settings.MAX_FILE_SIZE), None) != None:
+            request_contains_large_file = next((file for file in files if file.size > settings.MAX_FILE_SIZE*1024*1024), False)
+
+            if request_contains_large_file != False:
                 return Response(
-                    {"error": "File size limit breached NEW"}, status=status.HTTP_400_BAD_REQUEST
+                    {"error": f"Maximum filesize exceeded. ({settings.MAX_FILE_SIZE} MB)"},
+                    status=status.HTTP_400_BAD_REQUEST
                  )
 
             for file in files:

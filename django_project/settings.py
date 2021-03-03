@@ -135,8 +135,8 @@ ELASTICSEARCH_DSL = {
 
 TESSERACT_PATH = env("TESSERACT_PATH")
 
-# Set max file size in requests, current 20MB
-MAX_FILE_SIZE = 20*1024*1024
+# Set max file size in requests in MB
+MAX_FILE_SIZE = 20
 
 # Set max files in a request
 MAX_FILES_PER_REQUEST = 50
