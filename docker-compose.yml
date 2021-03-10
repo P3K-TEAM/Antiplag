@@ -34,6 +34,8 @@ services:
     image: antiplag/backend:v1
     volumes:
       - .:/backend/antiplag
+    environment:
+      - TESSERACT_PATH=/usr/bin/tesseract
     command: pipenv run bash -c "cd antiplag && celery -A django_project worker -l info"
     ports:
       - "8001:8001"
