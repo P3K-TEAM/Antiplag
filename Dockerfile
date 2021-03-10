@@ -6,7 +6,7 @@ COPY Pipfile /backend/
 COPY Pipfile.lock /backend/
 COPY nltk_init.py /backend/
 RUN pip install pipenv
-RUN pipenv install
+RUN pipenv install --pre
 RUN pipenv run python nltk_init.py
 RUN apt-get update
 RUN apt-get install -y tesseract-ocr
