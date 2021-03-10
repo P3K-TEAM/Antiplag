@@ -9,13 +9,13 @@ from .models import Submission, Document
 from .constants import *
 from .tasks import process_documents
 
+from django.conf import settings
 
 class SubmissionList(APIView):
     serializer_class = serializers.SubmissionSerializer
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
-
         # TODO: Do not create save the submission to the DB unless all conditions are passing
 
         # create new submission
@@ -36,10 +36,24 @@ class SubmissionList(APIView):
         if is_file:
             files = request.FILES.getlist("files")
 
+            if len(files) > settings.MAX_FILES_PER_REQUEST:
+                 return Response(
+                     {"error": f"More than max allowed files per request submitted.  ({settings.MAX_FILES_PER_REQUEST})"},
+                     status=status.HTTP_400_BAD_REQUEST
+                 )
+
             if not files:
                 return Response(
                     {"error": "No files present"}, status=status.HTTP_400_BAD_REQUEST
                 )
+
+            request_contains_large_file = next((file for file in files if file.size > settings.MAX_FILE_SIZE*1024*1024), False)
+
+            if request_contains_large_file != False:
+                return Response(
+                    {"error": f"Maximum filesize exceeded. ({settings.MAX_FILE_SIZE} MB)"},
+                    status=status.HTTP_400_BAD_REQUEST
+                 )
 
             for file in files:
                 Document.objects.create(
@@ -48,6 +62,7 @@ class SubmissionList(APIView):
                     submission=submission,
                     type=Document.DocumentType.FILE,
                 )
+
 
         else:
             text_raw = request.body.decode()
@@ -63,10 +78,10 @@ class SubmissionList(APIView):
                 type=Document.DocumentType.TEXT,
                 text_raw=text_raw,
             )
-
+        
         # Run background task that processes documents
-        process_documents.delay(submission.id)
-
+        process_documents(submission.id)
+        
         return Response(
             self.serializer_class(submission).data, status=status.HTTP_201_CREATED
         )

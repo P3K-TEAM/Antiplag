@@ -1,3 +1,8 @@
+def mark(marks, num):
+    marks[num] = '_'
+    return marks
+
+
 def unmarked(marks, num):
     if marks[num] == '*':
         return True
@@ -46,7 +51,9 @@ def gst(text_a, text_b, min_length):
                     for j in range(0, maxmatch):
                         marks_a = mark(list(marks_a), match[1]+j)
                         marks_b = mark(list(marks_b), match[2]+j)
-                    similarities.append((match[1], match[1] + maxmatch, text_a[match[1]:(match[1] + maxmatch)]))
+                    similarities.append({"begin": match[1],
+                                        "end": match[1] + maxmatch,
+                                        "text": text_a[match[1]:(match[1] + maxmatch)]})
                     length_of_tokens_tiled = length_of_tokens_tiled + maxmatch
 
         if maxmatch == min_length:

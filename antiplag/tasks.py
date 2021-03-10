@@ -15,29 +15,22 @@ def process_documents(submission_id):
         submission = Submission.objects.get(id=submission_id)
     except:
         return
-
     # update submission status
     submission.status = Submission.SubmissionStatus.PROCESSING
     submission.save()
 
     documents = submission.documents.all()
-
     for document in documents:
-
         # extract file contents
         if document.type == Document.DocumentType.FILE:
             document.text_raw = process_file(document.file)
-
         # preprocess text
         document.language = detect_language(document.text_raw)
         document.text = process_raw_text(document.text_raw, document.language)
-
         # save the document
         document.save()
-
     # document comparison
     compare_documents(documents)
-
     # update submission status
     submission.status = Submission.SubmissionStatus.PROCESSED
     submission.save()
@@ -85,8 +78,7 @@ def compare_documents(
         user_documents.remove(doc)
 
         result_similarity = 0
-        compared_count = 0
-
+        compared_count = 0 
         results = []
         # Compare current document with elastic docs
         for similar_doc in similar_documents:
@@ -95,37 +87,37 @@ def compare_documents(
                 # returns percentage representing how similar docs are
                 similarity = text_comparison(doc.text, similar_doc["text"])
 
-                result_similarity += similarity
+                result_similarity += similarity[0][1]
                 compared_count += 1
             except:
                 # TODO: Should uncomparable documents be included?
                 similarity = None
 
-            if similarity > threshold:
+            if similarity[0][1] > threshold:
                 results.append(
                     {
                         "name": similar_doc["name"],
-                        "percentage": ceil(similarity * round_factor) / round_factor,
+                        "percentage": ceil(similarity[0][1] * round_factor) / round_factor,
+                        "intervals": similarity[0][0]
                     }
                 )
-
         # Compare current document against user uploaded docs
         for user_doc in user_documents:
             try:
+
                 # returns percentage representing how similar docs are
                 similarity = text_comparison(doc.text, user_doc.text)
-
-                result_similarity += similarity
+                result_similarity += similarity[0][1]
                 compared_count += 1
             except:
                 # TODO: Should uncomparable documents be included?
                 similarity = None
 
-            results.append({"name": str(user_doc), "percentage": similarity})
+            
+            results.append({"name": str(user_doc), "percentage": similarity[0][1], "intervals": similarity[0][0]})
 
         if compared_count > 0:
-            result_similarity /= compared_count
-
+            result_similarity /= compared_count 
         Result.objects.create(
             document=doc,
             matched_docs=results,

@@ -1,7 +1,7 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from nlp.greedy_string_tiling import gst
-
+from nlp.text_preprocessing import extract_text_from_file
 
 def compare_two_texts(a, b, length):
     first_to_second = gst(a, b, length)
@@ -19,7 +19,7 @@ def compare_to_many_texts(a, files, length):
         for similarity in gst_list[0]:
             add = True
             for interval in final_intervals:
-                if similarity[2] in interval[2]:
+                if similarity.text in interval.text:
                     add = False
             if add:
                 intervals.append(similarity)
@@ -29,11 +29,9 @@ def compare_to_many_texts(a, files, length):
 
     mask = len(a) * '*'
     for interval in final_intervals:
-        mask = mask[:a.find(interval[2])] + (len(interval[2]) * '_') + mask[a.find(interval[2]) + len(interval[2]):]
+        mask = mask[:a.find(interval.text)] + (len(interval.text) * '_') + mask[a.find(interval.text) + len(interval.text):]
 
     return final_intervals, round(mask.count('_')/len(a), 3)
 
-
 def text_comparison(doc1, doc2):
-    document_vectors = TfidfVectorizer().fit_transform([doc1, doc2])
-    return cosine_similarity(document_vectors)[0][1]
+    return compare_two_texts(doc1, doc2, 50)

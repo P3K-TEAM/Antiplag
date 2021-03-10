@@ -17,7 +17,7 @@ from environ import Env
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = Env(DEBUG=(bool, False))
-env.read_env(env.str("./", ".env"))
+env.read_env(".env")
 
 DEBUG = env("DEBUG")
 
@@ -134,3 +134,9 @@ ELASTICSEARCH_DSL = {
 }
 
 TESSERACT_PATH = env("TESSERACT_PATH")
+
+# Set max file size in requests in MB
+MAX_FILE_SIZE = 20
+
+# Set max files in a request
+MAX_FILES_PER_REQUEST = 50

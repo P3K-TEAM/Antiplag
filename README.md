@@ -1,58 +1,39 @@
 # AntiPlag - Backend
 
 # Prerequisites
- - [Python ^3.0](https://www.python.org/downloads/) 
- - [Pip](https://pypi.org/project/pip/) 
- - [Pipenv](https://pypi.org/project/pipenv/)
- - [Tesseract](https://digi.bib.uni-mannheim.de/tesseract/) - for more info read our [OCR docs](docs/OPTICAL_TEXT_RECOGNITION.md)
-
-## Installation
-
-1. Install all dependencies using
-
-    ```
-    pipenv install
-    ```
+ - [Docker](https://www.docker.com/)
  
-## Configuration
-
-1. Activate virtual environment
-
-   ```
-   pipenv shell
-   ```
+## Installation and configuration
 
 1. Set your environment variables
     
-    Create your own `.env` file in root similar to `.env.example`
+    Create your own `.env` file in root similar to `.env.example`. 
+    
+    Specify your `ELASTIC_HOST`.
+    `DJANGO_SECRET_KEY` can be generated as `base64 /dev/urandom | head -c50`.
+    
+    Other configuration in `.env.example` is ready for local development.
+
+1. Build and run docker containers
+
+    Run following command in base directory of this project:
+    ```
+    docker-compose up
+    ```
+    Docker image for this application will be automatically built. Then, all necessary infrastructure (database, message broker)
+    will be run along with web application and Celery worker.
 
 1. Run database migrations
-    
-    1. Have your database server running first (If you're having troubles with this step, check our [Setting up PostgreSQL with Docker docs](docs/SETUP_DOCKER_DATABASE.md))
-    1. Setup database credentials to `DATABASE_URL` variable in `.env` file in following format:
-        
-       ```
-       postgresql://<user>:<password>@<hostname>:<port>/<database>
-       ```
-     
-    1. To create all necessary tables in database, run
+         
+    1. Create all necessary tables in database by executing:
         
         ```
-        python manage.py migrate
+        docker-compose exec web pipenv run bash -c "cd antiplag && python manage.py migrate"
         ```
 
 ## Usage
 
-1. Activate virtual environment
-
-   ```
-   pipenv shell
-   ```
-
-1. Run local development server 
-    ```
-    python manage.py runserver
-    ```
+1. Run `docker-compose up` in base directory of this project.
 
 ## Guides
 
