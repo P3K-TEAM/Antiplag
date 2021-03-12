@@ -47,7 +47,7 @@ class DocumentSerializer(serializers.ModelSerializer):
 class ResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = Result
-        fields = ("percentage", "matched_docs")
+        fields = ("percentage", "matched_docs", "intervals")
 
 
 class DocumentDetailedSerializer(NonNullModelSerializer, serializers.ModelSerializer):

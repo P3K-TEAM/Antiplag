@@ -90,22 +90,23 @@ def compare_documents(
         results = []
         # Compare current document with elastic docs
         for similar_doc in similar_documents:
-            similarity = 0
+            similarity = None
             try:
                 # returns percentage representing how similar docs are
                 similarity = text_comparison(doc.text, similar_doc["text"])
 
-                result_similarity += similarity
+                result_similarity += similarity['first_to_second']['similarity']
                 compared_count += 1
             except:
                 # TODO: Should uncomparable documents be included?
                 similarity = None
 
-            if similarity > threshold:
+            if similarity['first_to_second']['similarity'] > threshold:
                 results.append(
                     {
                         "name": similar_doc["name"],
-                        "percentage": ceil(similarity * round_factor) / round_factor,
+                        "percentage": ceil(similarity['first_to_second']['similarity'] * round_factor) / round_factor,
+                        "intervals": similarity['first_to_second']['intervals']
                     }
                 )
 
@@ -115,13 +116,18 @@ def compare_documents(
                 # returns percentage representing how similar docs are
                 similarity = text_comparison(doc.text, user_doc.text)
 
-                result_similarity += similarity
+                result_similarity += similarity['first_to_second']['similarity']
                 compared_count += 1
             except:
                 # TODO: Should uncomparable documents be included?
                 similarity = None
 
-            results.append({"name": str(user_doc), "percentage": similarity})
+            results.append(
+                {
+                    "name": str(user_doc), 
+                    "percentage": similarity['first_to_second']['similarity'], 
+                    "intervals": similarity['first_to_second']['intervals']
+                    })
 
         if compared_count > 0:
             result_similarity /= compared_count

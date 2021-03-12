@@ -51,3 +51,7 @@ class Result(models.Model):
     @property
     def matches(self):
         return len(self.matched_docs)
+
+    @property
+    def intervals(self):
+        return self.matched_docs[0]["intervals"]
