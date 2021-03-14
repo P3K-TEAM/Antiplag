@@ -37,10 +37,6 @@ class Document(models.Model):
     def __str__(self):
         return f"{self.name if self.name else f'Document {self.id}'} ({self.type})"
 
-    @property
-    def intervals(self):
-        return None
-
 
 class Result(models.Model):
     document = models.OneToOneField(

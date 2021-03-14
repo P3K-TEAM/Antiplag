@@ -56,7 +56,7 @@ class DocumentDetailedSerializer(NonNullModelSerializer, serializers.ModelSerial
 
     class Meta:
         model = Document
-        fields = ("id", "name", "matches", "percentage", "intervals")
+        fields = ("id", "name", "matches", "percentage")
 
 
 class DocumentResultSerializer(serializers.ModelSerializer):
