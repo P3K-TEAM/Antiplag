@@ -37,6 +37,10 @@ class Document(models.Model):
     def __str__(self):
         return f"{self.name if self.name else f'Document {self.id}'} ({self.type})"
 
+    @property
+    def intervals(self):
+        return None
+
 
 class Result(models.Model):
     document = models.OneToOneField(
@@ -52,6 +56,5 @@ class Result(models.Model):
     def matches(self):
         return len(self.matched_docs)
 
-    @property
-    def intervals(self):
-        return self.matched_docs[0]["intervals"]
+
+
