@@ -1,5 +1,5 @@
 from nlp.greedy_string_tiling import gst
-from django_project.settings import SIMILARITY_LENGTH
+from django_project.settings import MIN_SIMILARITY_LENGTH
 
 
 def compare_two_texts(a, b, length):
@@ -11,4 +11,4 @@ def compare_two_texts(a, b, length):
 
 
 def text_comparison(doc1, doc2):
-    return compare_two_texts(doc1, doc2, SIMILARITY_LENGTH)
+    return compare_two_texts(doc1, doc2, MIN_SIMILARITY_LENGTH)

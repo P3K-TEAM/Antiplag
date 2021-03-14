@@ -55,6 +55,3 @@ class Result(models.Model):
     @property
     def matches(self):
         return len(self.matched_docs)
-
-
-
