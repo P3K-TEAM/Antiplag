@@ -1,7 +1,14 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+from nlp.greedy_string_tiling import gst
+from django_project.settings import MIN_SIMILARITY_LENGTH
+
+
+def compare_two_texts(a, b, length):
+    first_to_second = gst(a, b, length)
+    second_to_first = gst(b, a, length)
+
+    return {"first_to_second": {"intervals": first_to_second[0], "similarity": round(first_to_second[1] / len(a), 3)},
+            "second_to_first": {"intervals": second_to_first[0], "similarity": round(second_to_first[1] / len(b), 3)}}
 
 
 def text_comparison(doc1, doc2):
-    document_vectors = TfidfVectorizer().fit_transform([doc1, doc2])
-    return cosine_similarity(document_vectors)[0][1]
+    return compare_two_texts(doc1, doc2, MIN_SIMILARITY_LENGTH)

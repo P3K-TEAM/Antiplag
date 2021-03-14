@@ -140,3 +140,6 @@ MAX_FILE_SIZE = 20
 
 # Set max files in a request
 MAX_FILES_PER_REQUEST = 50
+
+# Minimal string length considered similarity
+MIN_SIMILARITY_LENGTH = 50
