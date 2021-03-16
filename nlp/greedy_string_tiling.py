@@ -45,15 +45,14 @@ def gst(text_a, text_b, min_length):
                     matches.append((j, p, t))
                     maxmatch = j
         for match in matches:
-            if match[0] == maxmatch:
-                if unmarked_in_range(marks_a, match[1], match[1] + maxmatch - 1) & \
-                        unmarked_in_range(marks_b, match[2], match[2] + maxmatch - 1):
-                    for j in range(0, maxmatch):
-                        marks_a = mark(list(marks_a), match[1]+j)
-                        marks_b = mark(list(marks_b), match[2]+j)
-                    similarities.append({"begin": match[1],
-                                         "end": match[1] + maxmatch})
-                    length_of_tokens_tiled = length_of_tokens_tiled + maxmatch
+            if unmarked_in_range(marks_a, match[1], match[1] + match[0] - 1) and \
+                    unmarked_in_range(marks_b, match[2], match[2] + match[0] - 1):
+                for j in range(0, match[0]):
+                    marks_a = mark(list(marks_a), match[1]+j)
+                    marks_b = mark(list(marks_b), match[2]+j)
+                similarities.append({"begin": match[1],
+                                     "end": match[1] + maxmatch})
+                length_of_tokens_tiled = length_of_tokens_tiled + maxmatch
 
         if maxmatch == min_length:
             break

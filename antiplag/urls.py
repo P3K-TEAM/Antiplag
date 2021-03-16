@@ -6,4 +6,5 @@ urlpatterns = [
     path("submissions/", views.SubmissionList.as_view()),
     path("submissions/<int:id>", views.SubmissionDetail.as_view()),
     path("documents/<int:id>", views.DocumentDetail.as_view()),
+    path("documents/<int:first_id>/diff/<second_id>", views.DocumentDiff.as_view()),
 ]
