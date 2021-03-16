@@ -107,6 +107,37 @@ class SubmissionDetail(APIView):
         return Response(data=data)
 
 
+class SubmissionGraphDetail(APIView):
+    def get(self, request, id):
+        submission = get_object_or_404(Submission, pk=id)
+
+        nodes = []
+        links = []
+        if submission.status == Submission.SubmissionStatus.PROCESSED:
+            for doc in submission.documents.all():
+                doc_data = serializers.DocumentDetailedSerializer(doc).data
+                nodes.append(
+                    {"id": doc_data["id"], "name": doc_data["name"], "uploaded": True}
+                )
+
+                matched_documents = doc.result.matched_docs
+                for matched_doc in matched_documents:
+                    nodes.append(
+                        {
+                            "name": matched_doc.get("name", ""),
+                            "id": matched_doc.get("elastic_id", ""),
+                        }
+                    )
+                    links.append(
+                        {
+                            "source": doc_data["id"],
+                            "target": matched_doc.get("elastic_id", ""),
+                            "value": matched_doc.get("percentage", 0),
+                        }
+                    )
+        return Response(data={"nodes": nodes, "links": links})
+
+
 class DocumentDetail(APIView):
     serializer_class = serializers.DocumentResultSerializer
 
