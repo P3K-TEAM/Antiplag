@@ -10,7 +10,7 @@ from .constants import *
 from .tasks import process_documents
 
 from django.conf import settings
-from nlp.elastic import Elastic
+from nlp.text_preprocessing import preprocess_text
 
 class SubmissionList(APIView):
     serializer_class = serializers.SubmissionSerializer
@@ -137,24 +137,25 @@ class DocumentDiff(APIView):
                 if doc["elastic_id"] == second_id:
                     second_document = doc
 
-            #for doc in Elastic.find_similar(first_document.text, 10):
-                #if doc["elastic_id"] == second_id:
-                    #second_document = doc
-
             intervals = second_document["intervals"]
 
             if not second_document:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
             matches = []
+            second_text = preprocess_text(second_document["text"],
+                                          words_to_numbers=True,
+                                          remove_numbers=False,
+                                          tokenize_words=False,
+                                          lemmatize=False,
+                                          remove_stopwords=True,)[1]
             for interval in intervals:
-                begin = second_document["text"].find(first_document.text[interval["begin"]:interval["end"]])
-                if begin != -1:
-                    end = begin + (interval["end"] - interval["begin"])
-                    matches.append({"fromA": interval["begin"],
-                                    "toA": interval["end"],
-                                    "fromB": begin,
-                                    "toB": end})
+                begin = second_text.find(first_document.text[interval["begin"]:interval["end"]])
+                end = begin + (interval["end"] - interval["begin"])
+                matches.append({"fromA": interval["begin"],
+                                "toA": interval["end"],
+                                "fromB": begin,
+                                "toB": end})
 
             return Response(
                 {
