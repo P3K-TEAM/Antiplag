@@ -34,7 +34,6 @@ def process_documents(submission_id):
 
         # save the document
         document.save()
-
     # document comparison
     compare_documents(documents)
 
@@ -106,7 +105,9 @@ def compare_documents(
                     {
                         "name": similar_doc["name"],
                         "percentage": ceil(similarity['first_to_second']['similarity'] * round_factor) / round_factor,
-                        "intervals": similarity['first_to_second']['intervals']
+                        "intervals": similarity['first_to_second']['intervals'],
+                        "elastic_id": similar_doc["elastic_id"],
+                        "text": similar_doc["text"],
                     }
                 )
 

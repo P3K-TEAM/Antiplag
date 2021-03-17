@@ -10,13 +10,13 @@ from .constants import *
 from .tasks import process_documents
 
 from django.conf import settings
+from nlp.text_preprocessing import preprocess_text
 
 class SubmissionList(APIView):
     serializer_class = serializers.SubmissionSerializer
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
-
         # TODO: Do not create save the submission to the DB unless all conditions are passing
 
         # create new submission
@@ -64,7 +64,6 @@ class SubmissionList(APIView):
                     type=Document.DocumentType.FILE,
                 )
 
-
         else:
             text_raw = request.body.decode()
 
@@ -79,7 +78,6 @@ class SubmissionList(APIView):
                 type=Document.DocumentType.TEXT,
                 text_raw=text_raw,
             )
-
         # Run background task that processes documents
         process_documents.delay(submission.id)
 
@@ -150,6 +148,42 @@ class DocumentDetail(APIView):
                     "document": self.serializer_class(instance=document).data,
                     "submission_id": document.submission.id,
                     "is_multiple": document.submission.documents.count() > 1,
+                }
+            )
+        else:
+            # unprocessed submission documents should 'not exist' for the user
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class DocumentDiff(APIView):
+    def get(self, request, first_id, second_id):
+        first_document = get_object_or_404(Document, pk=first_id)
+        second_document = None
+        intervals = []
+
+        if first_document.submission.status == Submission.SubmissionStatus.PROCESSED:
+
+            second_document = next(doc for doc in first_document.result.matched_docs if doc["elastic_id"] == second_id)
+
+            if not second_document:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+
+            intervals = second_document["intervals"]
+
+            return Response(
+                {
+
+                    "TextA":
+                        {
+                            "name": first_document.name,
+                            "content": first_document.text,
+                        },
+                    "TextB":
+                        {
+                             "name": second_document["name"],
+                             "content": second_document["text"],
+                        },
+                    "matches": intervals
                 }
             )
         else:
