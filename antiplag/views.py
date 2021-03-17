@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 from . import serializers
 from .models import Submission, Document
-from .constants import *
+from .constants import TEXT_SUBMISSION_NAME, CONTENT_TYPE_FILE, CONTENT_TYPE_TEXT
 from .tasks import process_documents
 
 from django.conf import settings
@@ -74,6 +74,7 @@ class SubmissionList(APIView):
                 )
 
             Document.objects.create(
+                name=TEXT_SUBMISSION_NAME,
                 submission=submission,
                 type=Document.DocumentType.TEXT,
                 text_raw=text_raw,
