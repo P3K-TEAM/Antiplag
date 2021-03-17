@@ -50,8 +50,10 @@ def gst(text_a, text_b, min_length):
                 for j in range(0, match[0]):
                     marks_a = mark(list(marks_a), match[1]+j)
                     marks_b = mark(list(marks_b), match[2]+j)
-                similarities.append({"begin": match[1],
-                                     "end": match[1] + maxmatch})
+                similarities.append({"beginA": match[1],
+                                     "endA": match[1] + match[0] - 1,
+                                     "beginB": match[2],
+                                     "endB": match[2] + match[0] - 1})
                 length_of_tokens_tiled = length_of_tokens_tiled + maxmatch
 
         if maxmatch == min_length:

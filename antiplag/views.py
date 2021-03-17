@@ -64,7 +64,6 @@ class SubmissionList(APIView):
                     type=Document.DocumentType.FILE,
                 )
 
-
         else:
             text_raw = request.body.decode()
 
@@ -133,32 +132,16 @@ class DocumentDiff(APIView):
 
         if first_document.submission.status == Submission.SubmissionStatus.PROCESSED:
 
-            for doc in first_document.result.matched_docs:
-                if doc["elastic_id"] == second_id:
-                    second_document = doc
-
-            intervals = second_document["intervals"]
+            second_document = next(doc for doc in first_document.result.matched_docs if doc["elastic_id"] == second_id)
 
             if not second_document:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
-            matches = []
-            second_text = preprocess_text(second_document["text"],
-                                          words_to_numbers=True,
-                                          remove_numbers=False,
-                                          tokenize_words=False,
-                                          lemmatize=False,
-                                          remove_stopwords=True,)[1]
-            for interval in intervals:
-                begin = second_text.find(first_document.text[interval["begin"]:interval["end"]])
-                end = begin + (interval["end"] - interval["begin"])
-                matches.append({"fromA": interval["begin"],
-                                "toA": interval["end"],
-                                "fromB": begin,
-                                "toB": end})
+            intervals = second_document["intervals"]
 
             return Response(
                 {
+
                     "TextA":
                         {
                             "name": first_document.name,
@@ -169,7 +152,7 @@ class DocumentDiff(APIView):
                              "name": second_document["name"],
                              "content": second_document["text"],
                         },
-                    "matches": matches
+                    "matches": intervals
                 }
             )
         else:

@@ -21,6 +21,7 @@ def process_documents(submission_id):
     submission.save()
 
     documents = submission.documents.all()
+
     for document in documents:
 
         # extract file contents
