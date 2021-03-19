@@ -11,6 +11,7 @@ from .tasks import process_documents
 
 from django.conf import settings
 from nlp.text_preprocessing import preprocess_text
+from django.utils.translation import ugettext as _
 
 class SubmissionList(APIView):
     serializer_class = serializers.SubmissionSerializer
@@ -29,8 +30,9 @@ class SubmissionList(APIView):
         is_text = CONTENT_TYPE_TEXT in request.content_type
 
         if not (is_file or is_text):
+            output = {_("error"): _("Unsupported Content-Type header")},
             return Response(
-                {"error": "Unsupported Content-Type header"},
+                output,
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -38,21 +40,25 @@ class SubmissionList(APIView):
             files = request.FILES.getlist("files")
 
             if len(files) > settings.MAX_FILES_PER_REQUEST:
-                 return Response(
-                     {"error": f"More than max allowed files per request submitted.  ({settings.MAX_FILES_PER_REQUEST})"},
-                     status=status.HTTP_400_BAD_REQUEST
-                 )
+                output = {_("error"): _("More than max allowed files per request submitted. (%s)") % settings.MAX_FILES_PER_REQUEST}
+                return Response(
+                    output,
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
             if not files:
+                output = {_("error"): _("No files present")}
                 return Response(
-                    {"error": "No files present"}, status=status.HTTP_400_BAD_REQUEST
+                    output,
+                    status=status.HTTP_400_BAD_REQUEST
                 )
 
             request_contains_large_file = next((file for file in files if file.size > settings.MAX_FILE_SIZE*1024*1024), False)
 
             if request_contains_large_file != False:
+                output = {_("error"): _("Maximum filesize exceeded. (%s) MB") % settings.MAX_FILE_SIZE}
                 return Response(
-                    {"error": f"Maximum filesize exceeded. ({settings.MAX_FILE_SIZE} MB)"},
+                    output,
                     status=status.HTTP_400_BAD_REQUEST
                  )
 
@@ -68,8 +74,9 @@ class SubmissionList(APIView):
             text_raw = request.body.decode()
 
             if not text_raw.strip():
+                output = {_("error"): _("No text was specified")}
                 return Response(
-                    {"error": "No text was specified"},
+                    output,
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
