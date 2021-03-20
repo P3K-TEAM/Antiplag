@@ -1,25 +1,17 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
-msgid ""
-msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-19 20:04+0100\n"
+"POT-Creation-Date: 2021-03-20 16:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Last-Translator: P3K TEAM <tim10fiit@googlegroups.com>\n"
+"Language-Team: Slovak <LL@li.org>\n"
+"Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n "
 ">= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);\n"
 
-#: .\views.py:33
+#: .\views.py:34
 msgid "Unsupported Content-Type header."
 msgstr "Nepodporovaný Content-Type header."
 
@@ -28,15 +20,15 @@ msgstr "Nepodporovaný Content-Type header."
 msgid "More than max allowed files per request submitted. (%s)"
 msgstr "Prekročili ste maximálny povolený limit súborov. (%s)"
 
-#: .\views.py:50
+#: .\views.py:49
 msgid "No files present."
 msgstr "Nezadali ste žiaden súbor."
 
-#: .\views.py:59
+#: .\views.py:57
 #, python-format
 msgid "Maximum filesize exceeded. (%s) MB"
 msgstr "Prekročili ste maximálnu veľkosť súboru. (%s) MB"
 
-#: .\views.py:77
+#: .\views.py:74
 msgid "No text was specified."
 msgstr "Nezadali ste žiaden text."

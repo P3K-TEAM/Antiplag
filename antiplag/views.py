@@ -30,9 +30,8 @@ class SubmissionList(APIView):
         is_text = CONTENT_TYPE_TEXT in request.content_type
 
         if not (is_file or is_text):
-            output = {"error": _("Unsupported Content-Type header.")},
             return Response(
-                output,
+                {"error": _("Unsupported Content-Type header.")},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -40,25 +39,22 @@ class SubmissionList(APIView):
             files = request.FILES.getlist("files")
 
             if len(files) > settings.MAX_FILES_PER_REQUEST:
-                output = {"error": _("More than max allowed files per request submitted. (%s)") % settings.MAX_FILES_PER_REQUEST}
                 return Response(
-                    output,
+                    {"error": _("More than max allowed files per request submitted. (%s)") % settings.MAX_FILES_PER_REQUEST},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
             if not files:
-                output = {"error": _("No files present.")}
                 return Response(
-                    output,
+                    {"error": _("No files present.")},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
             request_contains_large_file = next((file for file in files if file.size > settings.MAX_FILE_SIZE*1024*1024), False)
 
             if request_contains_large_file != False:
-                output = {"error": _("Maximum filesize exceeded. (%s) MB") % settings.MAX_FILE_SIZE}
                 return Response(
-                    output,
+                    {"error": _("Maximum filesize exceeded. (%s) MB") % settings.MAX_FILE_SIZE},
                     status=status.HTTP_400_BAD_REQUEST
                  )
 
@@ -74,9 +70,8 @@ class SubmissionList(APIView):
             text_raw = request.body.decode()
 
             if not text_raw.strip():
-                output = {"error": _("No text was specified.")}
                 return Response(
-                    output,
+                    {"error": _("No text was specified.")},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
