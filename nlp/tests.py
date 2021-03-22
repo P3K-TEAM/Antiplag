@@ -28,8 +28,8 @@ class GSTTestCase(TestCase):
         self.assertEqual(result, expected)
 
     def test_single_partial_match(self):
-        text_a = b"hello"
-        text_b = b"we are in helsinki now"
+        text_a = "hello"
+        text_b = "we are in helsinki now"
         match_len = 3
 
         expected = ([{'fromA': 0, 'toA': 3, 'fromB': 10, 'toB': 13}], 3)
@@ -38,8 +38,8 @@ class GSTTestCase(TestCase):
         self.assertEqual(result, expected)
 
     def test_no_match(self):
-        text_a = b"hello"
-        text_b = b"go away, you nuisance"
+        text_a = "hello"
+        text_b = "go away, you nuisance"
 
         expected = ([], 0)
         result = greedy_string_tiling(text_a, text_b, len(text_a))
