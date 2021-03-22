@@ -64,4 +64,4 @@ class DocumentResultSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Document
-        fields = ("name", "result", "text")
+        fields = ("name", "result")
