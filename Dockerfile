@@ -15,4 +15,4 @@ RUN pipenv run python nltk_init.py
 
 # Install tesseract-ocr
 RUN apt-get update
-RUN apt-get install -y tesseract-ocr
+RUN apt-get install -y tesseract-ocr gcc mono-mcs
