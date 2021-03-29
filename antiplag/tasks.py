@@ -8,6 +8,8 @@ from nlp.elastic import Elastic
 from nlp.text_comparison import text_comparison
 from nlp.text_preprocessing import extract_text_from_file, preprocess_text
 
+from django.core.mail import send_mail
+from django.conf import settings
 
 @shared_task(name="antiplag.tasks.process_documents")
 def process_documents(submission_id):
@@ -39,8 +41,15 @@ def process_documents(submission_id):
 
     # update submission status
     submission.status = Submission.SubmissionStatus.PROCESSED
-    submission.save()
 
+    # send email when done
+    send_mail('Tvoja kontrola bola dokončená',
+        'Pozri si výsledok svojej kontroly na: antiplag.sk/result/' + str(submission.id) + "/" ,
+        'antiplag@antiplag.sk',
+        [submission.email],
+        fail_silently=False)
+
+    submission.save()
 
 def process_file(file):
     return extract_text_from_file(file.path)
@@ -125,8 +134,8 @@ def compare_documents(
 
             results.append(
                 {
-                    "name": str(user_doc), 
-                    "percentage": similarity['first_to_second']['similarity'], 
+                    "name": str(user_doc),
+                    "percentage": similarity['first_to_second']['similarity'],
                     "intervals": similarity['first_to_second']['intervals']
                     })
 

@@ -22,7 +22,8 @@ class SubmissionList(APIView):
 
         # create new submission
         submission = Submission.objects.create(
-            status=Submission.SubmissionStatus.PENDING
+            status=Submission.SubmissionStatus.PENDING,
+            email = request.POST.get("email", "")
         )
 
         # check for request content type
