@@ -3,7 +3,10 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
-[dev-packages]
+[scripts]
+migrate = "bash -c \"cd antiplag && python manage.py migrate\""
+test = "bash -c \"cd antiplag && python manage.py test\""
+lint = "bash -c \"cd antiplag && black . --check\""
 
 [packages]
 asgiref = "==3.3.0"
