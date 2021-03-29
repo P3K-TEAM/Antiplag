@@ -61,7 +61,8 @@ class DocumentDetailedSerializer(NonNullModelSerializer, serializers.ModelSerial
 
 class DocumentResultSerializer(serializers.ModelSerializer):
     result = ResultSerializer(read_only=True)
+    intervals = serializers.ReadOnlyField(source="result.intervals")
 
     class Meta:
         model = Document
-        fields = ("name", "result", "text")
+        fields = ("name", "result", "text", "intervals")
