@@ -8,7 +8,10 @@ from nlp.elastic import Elastic
 from nlp.text_comparison import text_comparison
 from nlp.text_preprocessing import extract_text_from_file, preprocess_text
 
+from .constants import EMAIL_SENDER
 from django.core.mail import send_mail
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.conf import settings
 
 @shared_task(name="antiplag.tasks.process_documents")
@@ -41,15 +44,20 @@ def process_documents(submission_id):
 
     # update submission status
     submission.status = Submission.SubmissionStatus.PROCESSED
+    submission.save()
 
     # send email when done
-    send_mail('Tvoja kontrola bola dokončená',
-        'Pozri si výsledok svojej kontroly na: antiplag.sk/result/' + str(submission.id) + "/" ,
-        'antiplag@antiplag.sk',
-        [submission.email],
-        fail_silently=False)
-
-    submission.save()
+    if submission.email is not None:
+        try:
+            validate_email(submission.email)
+        except ValidationError as e:
+            print(_("bad email, details:"), e)
+        else:
+            send_mail(_("Antiplag - Your check has finished!"),
+                _("Check the results of your check at https://antiplag.sk/result/") + str(submission.id) + "/" ,
+                EMAIL_SENDER,
+                [submission.email],
+                fail_silently=False)
 
 def process_file(file):
     return extract_text_from_file(file.path)

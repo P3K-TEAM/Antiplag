@@ -24,7 +24,7 @@ class NonNullModelSerializer(serializers.ModelSerializer):
 class SubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Submission
-        fields = ("id", "status", "email")
+        fields = ("id", "status")
 
 
 class DocumentSerializer(serializers.ModelSerializer):
