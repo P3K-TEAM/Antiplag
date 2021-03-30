@@ -186,12 +186,12 @@ class DocumentDiff(APIView):
             return Response(
                 {
 
-                    "TextA":
+                    "textA":
                         {
                             "name": first_document.name,
                             "content": first_document.text,
                         },
-                    "TextB":
+                    "textB":
                         {
                              "name": second_document["name"],
                              "content": second_document["text"],
