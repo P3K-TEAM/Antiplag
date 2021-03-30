@@ -136,9 +136,11 @@ def compare_documents(
             results.append(
                 {
                     "name": str(user_doc),
-                    "percentage": similarity['first_to_second']['similarity'],
-                    "intervals": similarity['first_to_second']['intervals']
-                    })
+                    "percentage": similarity["first_to_second"]["similarity"],
+                    "intervals": similarity["first_to_second"]["intervals"],
+                    "id": user_doc.id,
+                }
+            )
 
         if compared_count > 0:
             result_similarity /= compared_count

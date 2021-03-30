@@ -126,31 +126,41 @@ class SubmissionGraphDetail(APIView):
     def get(self, request, id):
         submission = get_object_or_404(Submission, pk=id)
 
-        nodes = []
+        nodes = {}
         links = []
         if submission.status == Submission.SubmissionStatus.PROCESSED:
             for doc in submission.documents.all():
                 doc_data = serializers.DocumentDetailedSerializer(doc).data
-                nodes.append(
-                    {"id": doc_data["id"], "name": doc_data["name"], "uploaded": True}
-                )
+                doc_id = doc_data["id"]
+                nodes[doc_id] = {
+                    "id": doc_id,
+                    "name": doc_data["name"],
+                    "uploaded": True,
+                }
 
                 matched_documents = doc.result.matched_docs
                 for matched_doc in matched_documents:
-                    nodes.append(
-                        {
-                            "name": matched_doc.get("name", ""),
-                            "id": matched_doc.get("elastic_id", ""),
-                        }
+                    # It's either elastic document or our document
+                    matched_id = matched_doc.get("elastic_id", None) or matched_doc.get(
+                        "id", None
                     )
+                    if not matched_id:
+                        continue
+
+                    if matched_id not in nodes:
+                        nodes[matched_id] = {
+                            "name": matched_doc.get("name", ""),
+                            "id": matched_id,
+                        }
+
                     links.append(
                         {
-                            "source": doc_data["id"],
-                            "target": matched_doc.get("elastic_id", ""),
+                            "source": doc_id,
+                            "target": matched_id,
                             "value": matched_doc.get("percentage", 0),
                         }
                     )
-        return Response(data={"nodes": nodes, "links": links})
+        return Response(data={"nodes": list(nodes.values()), "links": links})
 
 
 class DocumentDetail(APIView):
