@@ -12,6 +12,8 @@ from .tasks import process_documents
 from django.conf import settings
 from nlp.text_preprocessing import preprocess_text
 from django.utils.translation import ugettext as _
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 
 class SubmissionList(APIView):
     serializer_class = serializers.SubmissionSerializer
@@ -20,10 +22,21 @@ class SubmissionList(APIView):
     def post(self, request):
         # TODO: Do not create save the submission to the DB unless all conditions are passing
 
+        # check if email is valid
+        email = request.POST.get("email", None)
+        if email is not None:
+            try:
+                validate_email(email)
+            except ValidationError as e:
+                return Response(
+                    {"error": _("Unrecognized email address format.")},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         # create new submission
         submission = Submission.objects.create(
             status=Submission.SubmissionStatus.PENDING,
-            email = request.POST.get("email", None)
+            email = email
         )
 
         # check for request content type
