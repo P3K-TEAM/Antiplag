@@ -4,9 +4,9 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [scripts]
-migrate = "bash -c \"cd antiplag && python manage.py migrate\""
-test = "bash -c \"cd antiplag && python manage.py test\""
-lint = "bash -c \"cd antiplag && black . --check\""
+migrate = "python manage.py migrate"
+test = "python manage.py test"
+lint = "black . --check"
 
 [packages]
 asgiref = "==3.3.0"
