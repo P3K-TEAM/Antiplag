@@ -23,7 +23,7 @@ services:
       - .:/backend/antiplag
     environment:
       - TESSERACT_PATH=/usr/bin/tesseract
-    command: pipenv run bash -c "cd antiplag && python manage.py runserver 0.0.0.0:8000"
+    command: pipenv run python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
     depends_on:
@@ -36,7 +36,7 @@ services:
       - .:/backend/antiplag
     environment:
       - TESSERACT_PATH=/usr/bin/tesseract
-    command: pipenv run bash -c "cd antiplag && celery -A django_project worker --pool=solo -l info"
+    command: pipenv run celery -A django_project worker --pool=solo -l info
     ports:
       - "8001:8001"
     depends_on:
