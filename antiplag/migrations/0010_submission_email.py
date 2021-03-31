@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('antiplag', '0009_auto_20201213_1555'),
+        ("antiplag", "0009_auto_20201213_1555"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='submission',
-            name='email',
+            model_name="submission",
+            name="email",
             field=models.EmailField(max_length=254, null=True),
         ),
     ]

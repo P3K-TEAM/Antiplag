@@ -12,7 +12,7 @@ class Submission(models.Model):
     status = models.CharField(max_length=10, choices=SubmissionStatus.choices)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    email = models.EmailField(max_length = 254, null=True)
+    email = models.EmailField(max_length=254, null=True)
 
     def __str__(self):
         return f"Submission {self.id} ({self.status})"

@@ -12,6 +12,7 @@ from .constants import EMAIL_SENDER
 from django.core.mail import send_mail
 from django.utils.translation import ugettext as _
 
+
 @shared_task(name="antiplag.tasks.process_documents")
 def process_documents(submission_id):
     try:
@@ -46,11 +47,15 @@ def process_documents(submission_id):
 
     # send email when done
     if submission.email is not None:
-        send_mail(_("Antiplag - Your check has finished!"),
-            _("Check the results of your check at https://antiplag.sk/result/%s/") % submission.id,
+        send_mail(
+            _("Antiplag - Your check has finished!"),
+            _("Check the results of your check at https://antiplag.sk/result/%s/")
+            % submission.id,
             EMAIL_SENDER,
             [submission.email],
-            fail_silently=False)
+            fail_silently=False,
+        )
+
 
 def process_file(file):
     return extract_text_from_file(file.path)

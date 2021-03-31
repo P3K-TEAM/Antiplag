@@ -21,7 +21,6 @@ class SubmissionList(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
-
         def email_valid(email):
             error = None
             try:
@@ -102,8 +101,8 @@ class SubmissionList(APIView):
 
         else:
             data = json.loads(request.body)
-            text_raw = data['text']
-            email = data['email'] if 'email' in data else None
+            text_raw = data["text"]
+            email = data["email"] if "email" in data else None
 
             if not text_raw.strip():
                 return Response(
