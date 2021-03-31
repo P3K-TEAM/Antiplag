@@ -10,7 +10,8 @@ class Elastic:
         )
 
         similar_docs = [
-            {"name": doc.name, "text": doc.text_raw, "elastic_id": doc.meta["id"]} for doc in search[:similar_count]
+            {"name": doc.name, "text": doc.text_raw, "elastic_id": doc.meta["id"]}
+            for doc in search[:similar_count]
         ]
 
         return similar_docs
