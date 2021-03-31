@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.views import APIView
 
 from . import serializers
@@ -14,29 +14,25 @@ from nlp.text_preprocessing import preprocess_text
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+import json, requests
 
 class SubmissionList(APIView):
     serializer_class = serializers.SubmissionSerializer
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def post(self, request):
-        # TODO: Do not create save the submission to the DB unless all conditions are passing
 
-        # check if email is valid
-        email = request.POST.get("email", None)
-        if email is not None:
+        def email_valid(email):
+            error = None
             try:
-                validate_email(email)
+                error = validate_email(email)
             except ValidationError as e:
-                return Response(
-                    {"error": _("Unrecognized email address format.")},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                error = e
+            return error is None
 
-        # create new submission
-        submission = Submission.objects.create(
+        # create new submission, dont save yet
+        submission = Submission(
             status=Submission.SubmissionStatus.PENDING,
-            email = email
         )
 
         # check for request content type
@@ -72,6 +68,15 @@ class SubmissionList(APIView):
                     status=status.HTTP_400_BAD_REQUEST
                  )
 
+            email = request.POST.get("email", None)
+            if email is not None and email_valid(email) is False:
+                return Response(
+                    {"error": _("Unrecognized email address format.")},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            submission.email = email
+            submission.save()
+
             for file in files:
                 Document.objects.create(
                     file=file,
@@ -81,13 +86,23 @@ class SubmissionList(APIView):
                 )
 
         else:
-            text_raw = request.body.decode()
+            data = json.loads(request.body)
+            text_raw = data['text']
+            email = data['email'] if 'email' in data else None
 
             if not text_raw.strip():
                 return Response(
                     {"error": _("No text was specified.")},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
+            if email is not None and email_valid(email) is False:
+                return Response(
+                    {"error": _("Unrecognized email address format.")},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            submission.email = email
+            submission.save()
 
             Document.objects.create(
                 name=TEXT_SUBMISSION_NAME,
