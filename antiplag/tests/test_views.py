@@ -81,4 +81,3 @@ class GraphViewTestCase(TestCase):
             "links": [{"source": 3, "target": 123, "value": 0.19}],
         }
         self.assertDictEqual(expected, result)
-
