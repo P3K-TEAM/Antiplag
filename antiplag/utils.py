@@ -29,6 +29,8 @@ def merge_intervals(indices):
             stack.append(top)
 
     starts = []
+    ends = []
+
     for x in stack:
         starts.append(
             {
@@ -40,9 +42,6 @@ def merge_intervals(indices):
                 },
             }
         )
-
-    ends = []
-    for x in stack:
         ends.append(
             {
                 "intervals": [x["to"] + 1, -1],
