@@ -14,6 +14,9 @@ class ResultModelTestCase(TestCase):
             submission=self.submission,
             type=Document.DocumentType.TEXT,
         )
+
+    def test_intervals(self):
+
         self.result = Result.objects.create(
             document=self.document,
             matched_docs=[
@@ -66,8 +69,6 @@ class ResultModelTestCase(TestCase):
             ],
         )
 
-    def test_intervals(self):
-
         expected = [
             {
                 "ranges": {
@@ -118,5 +119,16 @@ class ResultModelTestCase(TestCase):
                 "matches": [{"id": 0, "name": "A", "percentage": 0.9}],
             },
         ]
+
+        self.assertListEqual(expected, self.result.intervals)
+
+    def test_empty_intervals(self):
+
+        self.result = Result.objects.create(
+            document=self.document,
+            matched_docs=[],
+        )
+
+        expected = []
 
         self.assertListEqual(expected, self.result.intervals)

@@ -28,35 +28,35 @@ def merge_intervals(indices):
     starts = []
     ends = []
 
-    for item in stack:
+    for interval in stack:
         starts.append(
             {
-                "intervals": [item["from"], 1],
+                "intervals": [interval["from"], 1],
                 "doc": {
-                    "id": item["id"],
-                    "name": item["name"],
-                    "percentage": item["percentage"],
+                    "id": interval["id"],
+                    "name": interval["name"],
+                    "percentage": interval["percentage"],
                 },
             }
         )
         ends.append(
             {
-                "intervals": [item["to"] + 1, -1],
+                "intervals": [interval["to"] + 1, -1],
                 "doc": {
-                    "id": item["id"],
-                    "name": item["name"],
-                    "percentage": item["percentage"],
+                    "id": interval["id"],
+                    "name": interval["name"],
+                    "percentage": interval["percentage"],
                 },
             }
         )
 
-    size_1 = len(starts)
-    size_2 = len(ends)
+    size_of_starts = len(starts)
+    size_of_ends = len(ends)
 
     sorted_positions = []
     i, j = 0, 0
 
-    while i < size_1 and j < size_2:
+    while i < size_of_starts and j < size_of_ends:
         if starts[i]["intervals"][0] < ends[j]["intervals"][0]:
             sorted_positions.append(starts[i])
             i += 1
@@ -72,21 +72,21 @@ def merge_intervals(indices):
     prev = -1
     count = 0
 
-    for item in sorted_positions:
-        if item["intervals"][0] > prev and count != 0:
+    for interval in sorted_positions:
+        if interval["intervals"][0] > prev and count != 0:
             intervals.append(
                 {
-                    "ranges": {"from": prev, "to": item["intervals"][0] - 1},
+                    "ranges": {"from": prev, "to": interval["intervals"][0] - 1},
                     "matches": docs[:],
                 }
             )
 
-        prev = item["intervals"][0]
-        count += item["intervals"][1]
+        prev = interval["intervals"][0]
+        count += interval["intervals"][1]
 
-        if item["intervals"][1] == 1:
-            docs.append(item["doc"])
+        if interval["intervals"][1] == 1:
+            docs.append(interval["doc"])
         else:
-            del docs[docs.index(item["doc"])]
+            del docs[docs.index(interval["doc"])]
 
     return intervals
