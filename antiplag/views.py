@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 
 from . import serializers
@@ -10,7 +10,6 @@ from .constants import TEXT_SUBMISSION_NAME, CONTENT_TYPE_FILE, CONTENT_TYPE_TEX
 from .tasks import process_documents
 
 from django.conf import settings
-from nlp.text_preprocessing import preprocess_text
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -18,7 +17,7 @@ import json, requests
 
 class SubmissionList(APIView):
     serializer_class = serializers.SubmissionSerializer
-    parser_classes = (MultiPartParser, FormParser, JSONParser)
+    parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
 

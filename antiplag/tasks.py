@@ -10,7 +10,6 @@ from nlp.text_preprocessing import extract_text_from_file, preprocess_text
 
 from .constants import EMAIL_SENDER
 from django.core.mail import send_mail
-from django.conf import settings
 from django.utils.translation import ugettext as _
 
 @shared_task(name="antiplag.tasks.process_documents")

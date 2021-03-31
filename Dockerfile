@@ -13,7 +13,7 @@ COPY Pipfile .
 COPY Pipfile.lock .
 
 RUN pip install pipenv
-RUN pipenv install
+RUN pipenv install --pre --clear
 
 # Initialize nltk
 COPY nltk_init.py .
