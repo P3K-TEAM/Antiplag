@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from .constants import EMAIL_ADDRESS_RFC5321_LENGTH
 
 
 class Submission(models.Model):
@@ -12,7 +13,7 @@ class Submission(models.Model):
     status = models.CharField(max_length=10, choices=SubmissionStatus.choices)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    email = models.EmailField(max_length=254, null=True)
+    email = models.EmailField(max_length=EMAIL_ADDRESS_RFC5321_LENGTH, null=True)
 
     def __str__(self):
         return f"Submission {self.id} ({self.status})"

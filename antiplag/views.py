@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 from . import serializers
 from .models import Submission, Document
-from .constants import TEXT_SUBMISSION_NAME, CONTENT_TYPE_FILE, CONTENT_TYPE_TEXT
+from .constants import TEXT_SUBMISSION_NAME, CONTENT_TYPE_FILE, CONTENT_TYPE_JSON
 from .tasks import process_documents
 
 from django.conf import settings
@@ -21,22 +21,13 @@ class SubmissionList(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
-        def email_valid(email):
-            error = None
-            try:
-                error = validate_email(email)
-            except ValidationError as e:
-                error = e
-            return error is None
-
-        # create new submission, dont save yet
         submission = Submission(
             status=Submission.SubmissionStatus.PENDING,
         )
 
         # check for request content type
         is_file = CONTENT_TYPE_FILE in request.content_type
-        is_text = CONTENT_TYPE_TEXT in request.content_type
+        is_text = CONTENT_TYPE_JSON in request.content_type
 
         if not (is_file or is_text):
             return Response(
@@ -83,11 +74,14 @@ class SubmissionList(APIView):
                 )
 
             email = request.POST.get("email", None)
-            if email is not None and email_valid(email) is False:
-                return Response(
-                    {"error": _("Unrecognized email address format.")},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+            if email is not None:
+                try:
+                    validate_email(email)
+                except ValidationError as e:
+                    return Response(
+                        {"error": _("Unrecognized email address format.")},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
             submission.email = email
             submission.save()
 
@@ -110,11 +104,14 @@ class SubmissionList(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            if email is not None and email_valid(email) is False:
-                return Response(
-                    {"error": _("Unrecognized email address format.")},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+            if email is not None:
+                try:
+                    validate_email(email)
+                except ValidationError as e:
+                    return Response(
+                        {"error": _("Unrecognized email address format.")},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
             submission.email = email
             submission.save()
 
