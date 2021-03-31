@@ -41,7 +41,7 @@ class ResultModelTestCase(TestCase):
                             "fromA": 550,
                             "toA": 900,
                         },
-                    ]
+                    ],
                 },
                 {
                     "name": "B",
@@ -51,7 +51,7 @@ class ResultModelTestCase(TestCase):
                             "fromA": 17,
                             "toA": 27,
                         },
-                    ]
+                    ],
                 },
                 {
                     "name": "C",
@@ -61,7 +61,7 @@ class ResultModelTestCase(TestCase):
                             "fromA": 440,
                             "toA": 475,
                         },
-                    ]
+                    ],
                 },
             ],
         )
@@ -69,94 +69,54 @@ class ResultModelTestCase(TestCase):
     def test_intervals(self):
 
         expected = [
-                {
-                    "ranges": {
-                        "from": 0,
-                        "to": 16,
-                    },
-                    "matches": [
-                        {
-                            "id": 0,
-                            "name": 'A',
-                            "percentage": 0.9
-                        }
-                    ]
+            {
+                "ranges": {
+                    "from": 0,
+                    "to": 16,
                 },
-                {
-                    "ranges": {
-                        "from": 17,
-                        "to": 27,
-                    },
-                    "matches": [
-                        {
-                            "id": 0,
-                            "name": 'A',
-                            "percentage": 0.9
-                        },
-                        {
-                            "id": 1,
-                            "name": 'B',
-                            "percentage": 0.15
-                        }
-                    ]
+                "matches": [{"id": 0, "name": "A", "percentage": 0.9}],
+            },
+            {
+                "ranges": {
+                    "from": 17,
+                    "to": 27,
                 },
-                {
-                    "ranges": {
-                        "from": 28,
-                        "to": 439,
-                    },
-                    "matches": [
-                        {
-                            "id": 0,
-                            "name": 'A',
-                            "percentage": 0.9
-                        }
-                    ]
+                "matches": [
+                    {"id": 0, "name": "A", "percentage": 0.9},
+                    {"id": 1, "name": "B", "percentage": 0.15},
+                ],
+            },
+            {
+                "ranges": {
+                    "from": 28,
+                    "to": 439,
                 },
-                {
-                    "ranges": {
-                        "from": 440,
-                        "to": 475,
-                    },
-                    "matches": [
-                        {
-                            "id": 0,
-                            "name": 'A',
-                            "percentage": 0.9
-                        },
-                        {
-                            "id": 2,
-                            "name": 'C',
-                            "percentage": 0.30
-                        }
-                    ]
+                "matches": [{"id": 0, "name": "A", "percentage": 0.9}],
+            },
+            {
+                "ranges": {
+                    "from": 440,
+                    "to": 475,
                 },
-                {
-                    "ranges": {
-                        "from": 476,
-                        "to": 500,
-                    },
-                    "matches": [
-                        {
-                            "id": 0,
-                            "name": 'A',
-                            "percentage": 0.9
-                        }
-                    ]
+                "matches": [
+                    {"id": 0, "name": "A", "percentage": 0.9},
+                    {"id": 2, "name": "C", "percentage": 0.30},
+                ],
+            },
+            {
+                "ranges": {
+                    "from": 476,
+                    "to": 500,
                 },
-                {
-                    "ranges": {
-                        "from": 550,
-                        "to": 900,
-                    },
-                    "matches": [
-                        {
-                            "id": 0,
-                            "name": 'A',
-                            "percentage": 0.9
-                        }
-                    ]
-                }
-            ]
+                "matches": [{"id": 0, "name": "A", "percentage": 0.9}],
+            },
+            {
+                "ranges": {
+                    "from": 550,
+                    "to": 900,
+                },
+                "matches": [{"id": 0, "name": "A", "percentage": 0.9}],
+            },
+        ]
 
         self.assertListEqual(expected, self.result.intervals)

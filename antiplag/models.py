@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from antiplag.utils import merge_intervals
 
+
 class Submission(models.Model):
     class SubmissionStatus(models.TextChoices):
         PENDING = "PENDING"
@@ -58,7 +59,7 @@ class Result(models.Model):
         indices = []
 
         for matched_doc in self.matched_docs:
-            for match in matched_doc['intervals']:
+            for match in matched_doc["intervals"]:
                 indices.append(
                     {
                         "id": self.matched_docs.index(matched_doc),
@@ -72,4 +73,3 @@ class Result(models.Model):
         merged_intervals = merge_intervals(indices)
 
         return merged_intervals
-
