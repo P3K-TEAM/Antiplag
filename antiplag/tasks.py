@@ -104,18 +104,21 @@ def compare_documents(
                 # returns percentage representing how similar docs are
                 similarity = text_comparison(doc.text, similar_doc["text"])
 
-                result_similarity += similarity['first_to_second']['similarity']
+                result_similarity += similarity["first_to_second"]["similarity"]
                 compared_count += 1
             except:
                 # TODO: Should uncomparable documents be included?
                 similarity = None
 
-            if similarity['first_to_second']['similarity'] > threshold:
+            if similarity["first_to_second"]["similarity"] > threshold:
                 results.append(
                     {
                         "name": similar_doc["name"],
-                        "percentage": ceil(similarity['first_to_second']['similarity'] * round_factor) / round_factor,
-                        "intervals": similarity['first_to_second']['intervals'],
+                        "percentage": ceil(
+                            similarity["first_to_second"]["similarity"] * round_factor
+                        )
+                        / round_factor,
+                        "intervals": similarity["first_to_second"]["intervals"],
                         "elastic_id": similar_doc["elastic_id"],
                         "text": similar_doc["text"],
                     }
@@ -127,7 +130,7 @@ def compare_documents(
                 # returns percentage representing how similar docs are
                 similarity = text_comparison(doc.text, user_doc.text)
 
-                result_similarity += similarity['first_to_second']['similarity']
+                result_similarity += similarity["first_to_second"]["similarity"]
                 compared_count += 1
             except:
                 # TODO: Should uncomparable documents be included?
