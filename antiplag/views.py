@@ -13,6 +13,7 @@ from django.conf import settings
 from nlp.text_preprocessing import preprocess_text
 from django.utils.translation import ugettext as _
 
+
 class SubmissionList(APIView):
     serializer_class = serializers.SubmissionSerializer
     parser_classes = (MultiPartParser, FormParser)
@@ -40,23 +41,38 @@ class SubmissionList(APIView):
 
             if len(files) > settings.MAX_FILES_PER_REQUEST:
                 return Response(
-                    {"error": _("More than max allowed files per request submitted. (%s)") % settings.MAX_FILES_PER_REQUEST},
-                    status=status.HTTP_400_BAD_REQUEST
+                    {
+                        "error": _(
+                            "More than max allowed files per request submitted. (%s)"
+                        )
+                        % settings.MAX_FILES_PER_REQUEST
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
 
             if not files:
                 return Response(
                     {"error": _("No files present.")},
-                    status=status.HTTP_400_BAD_REQUEST
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            request_contains_large_file = next((file for file in files if file.size > settings.MAX_FILE_SIZE*1024*1024), False)
+            request_contains_large_file = next(
+                (
+                    file
+                    for file in files
+                    if file.size > settings.MAX_FILE_SIZE * 1024 * 1024
+                ),
+                False,
+            )
 
             if request_contains_large_file != False:
                 return Response(
-                    {"error": _("Maximum filesize exceeded. (%s) MB") % settings.MAX_FILE_SIZE},
-                    status=status.HTTP_400_BAD_REQUEST
-                 )
+                    {
+                        "error": _("Maximum filesize exceeded. (%s) MB")
+                        % settings.MAX_FILE_SIZE
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             for file in files:
                 Document.objects.create(
@@ -176,7 +192,11 @@ class DocumentDiff(APIView):
 
         if first_document.submission.status == Submission.SubmissionStatus.PROCESSED:
 
-            second_document = next(doc for doc in first_document.result.matched_docs if doc["elastic_id"] == second_id)
+            second_document = next(
+                doc
+                for doc in first_document.result.matched_docs
+                if doc["elastic_id"] == second_id
+            )
 
             if not second_document:
                 return Response(status=status.HTTP_404_NOT_FOUND)
@@ -185,18 +205,15 @@ class DocumentDiff(APIView):
 
             return Response(
                 {
-
-                    "TextA":
-                        {
-                            "name": first_document.name,
-                            "content": first_document.text,
-                        },
-                    "TextB":
-                        {
-                             "name": second_document["name"],
-                             "content": second_document["text"],
-                        },
-                    "matches": intervals
+                    "textA": {
+                        "name": first_document.name,
+                        "content": first_document.text,
+                    },
+                    "textB": {
+                        "name": second_document["name"],
+                        "content": second_document["text"],
+                    },
+                    "matches": intervals,
                 }
             )
         else:

@@ -51,7 +51,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    'django.middleware.locale.LocaleMiddleware',
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -111,8 +111,8 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = "en-us"
 
 LANGUAGES = [
-    ('en-us', _('English')),
-    ('sk', _('Slovak')),
+    ("en-us", _("English")),
+    ("sk", _("Slovak")),
 ]
 
 USE_I18N = True
@@ -150,4 +150,4 @@ MAX_FILE_SIZE = 20
 MAX_FILES_PER_REQUEST = 50
 
 # Minimal string length considered similarity
-MIN_SIMILARITY_LENGTH = 10
+MIN_SIMILARITY_LENGTH = 50
