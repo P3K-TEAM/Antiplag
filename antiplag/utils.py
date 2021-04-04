@@ -1,6 +1,6 @@
 def merge_intervals(indices):
 
-    if len(indices) <= 1:
+    if len(indices) <= 0:
         return indices
 
     stack = []
