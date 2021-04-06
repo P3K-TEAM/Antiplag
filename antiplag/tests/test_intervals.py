@@ -15,7 +15,7 @@ class ResultModelTestCase(TestCase):
         )
 
     def test_intervals(self):
-        self.result = Result.objects.create(
+        result1 = Result.objects.create(
             document=self.document,
             matched_docs=[
                 {
@@ -118,14 +118,14 @@ class ResultModelTestCase(TestCase):
             },
         ]
 
-        self.assertListEqual(expected, self.result.intervals)
+        self.assertListEqual(expected, result1.intervals)
 
     def test_empty_intervals(self):
-        self.result = Result.objects.create(
+        result1 = Result.objects.create(
             document=self.document,
             matched_docs=[],
         )
 
         expected = []
 
-        self.assertListEqual(expected, self.result.intervals)
+        self.assertListEqual(expected, result1.intervals)
