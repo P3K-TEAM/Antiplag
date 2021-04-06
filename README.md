@@ -1,5 +1,7 @@
 # AntiPlag - Backend
 
+![master pipeline](https://github.com/P3K-TEAM/backend/actions/workflows/github-ci.yml/badge.svg?branch=master)
+
 ## Prerequisites
 
 - [Docker](https://www.docker.com/)
