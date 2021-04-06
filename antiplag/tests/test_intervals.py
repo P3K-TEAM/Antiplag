@@ -5,7 +5,6 @@ from ..models import Submission, Document, Result
 
 class ResultModelTestCase(TestCase):
     def setUp(self):
-
         self.submission = Submission.objects.create(
             status=Submission.SubmissionStatus.PROCESSED
         )
@@ -16,7 +15,6 @@ class ResultModelTestCase(TestCase):
         )
 
     def test_intervals(self):
-
         self.result = Result.objects.create(
             document=self.document,
             matched_docs=[
@@ -123,7 +121,6 @@ class ResultModelTestCase(TestCase):
         self.assertListEqual(expected, self.result.intervals)
 
     def test_empty_intervals(self):
-
         self.result = Result.objects.create(
             document=self.document,
             matched_docs=[],

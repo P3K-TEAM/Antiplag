@@ -55,7 +55,6 @@ class Result(models.Model):
 
     @property
     def intervals(self):
-
         indices = []
 
         for matched_doc in self.matched_docs:

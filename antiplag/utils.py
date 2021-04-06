@@ -1,5 +1,4 @@
 def merge_intervals(indices):
-
     if len(indices) <= 0:
         return indices
 
