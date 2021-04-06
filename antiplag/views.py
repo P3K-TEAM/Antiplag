@@ -3,15 +3,25 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
+from django.conf import settings
+from django.utils.translation import ugettext as _
 
 from . import serializers
 from .models import Submission, Document
 from .constants import TEXT_SUBMISSION_NAME, CONTENT_TYPE_FILE, CONTENT_TYPE_TEXT
 from .tasks import process_documents
+from nlp.elastic import Elastic
 
-from django.conf import settings
-from nlp.text_preprocessing import preprocess_text
-from django.utils.translation import ugettext as _
+
+class Stats(APIView):
+    def get(self, request):
+        return Response(
+            data={
+                "submission_count": Submission.count(),
+                "submission_avg_time": Submission.average_time(),
+                "corpus_size": Elastic.count(),
+            }
+        )
 
 
 class SubmissionList(APIView):

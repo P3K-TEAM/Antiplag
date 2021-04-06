@@ -87,6 +87,13 @@ WSGI_APPLICATION = "django_project.wsgi.application"
 
 DATABASES = {"default": env.db()}
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "antiplag",
+    }
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 

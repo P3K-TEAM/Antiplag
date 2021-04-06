@@ -1,8 +1,14 @@
+from django.core.cache import cache
 from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import MoreLikeThis
 
 
 class Elastic:
+    @staticmethod
+    def count():
+        cached_value = cache.get("corpus_size", None)
+        return cached_value if cached_value else Search(index="documents").count()
+
     @staticmethod
     def find_similar(document_text, similar_count):
         search = Search(index="documents").query(
