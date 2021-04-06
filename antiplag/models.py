@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from antiplag.utils import merge_intervals
 
 
 class Submission(models.Model):
@@ -51,3 +52,23 @@ class Result(models.Model):
     @property
     def matches(self):
         return len(self.matched_docs)
+
+    @property
+    def intervals(self):
+        indices = []
+
+        for matched_doc in self.matched_docs:
+            for match in matched_doc["intervals"]:
+                indices.append(
+                    {
+                        "id": self.matched_docs.index(matched_doc),
+                        "name": matched_doc["name"],
+                        "percentage": matched_doc["percentage"],
+                        "from": match["fromA"],
+                        "to": match["toA"],
+                    }
+                )
+
+        merged_intervals = merge_intervals(indices)
+
+        return merged_intervals
