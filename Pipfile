@@ -37,3 +37,6 @@ black = "*"
 setuptools = "*"
 python-dev-tools = "*"
 greedy-string-tiling = {git = "https://github.com/apluslms/greedy-string-tiling.git", ref = "master", editable = true}
+
+[pipenv]
+allow_prereleases = true

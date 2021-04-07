@@ -1,18 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import User
+
+from antiplag.enums import SubmissionStatus
+from antiplag.managers import SubmissionManager
 from antiplag.utils import merge_intervals
 
 
 class Submission(models.Model):
-    class SubmissionStatus(models.TextChoices):
-        PENDING = "PENDING"
-        PROCESSING = "PROCESSING"
-        PROCESSED = "PROCESSED"
-
     user = models.ForeignKey(User, null=True, on_delete=models.RESTRICT)
     status = models.CharField(max_length=10, choices=SubmissionStatus.choices)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    objects = SubmissionManager()
 
     def __str__(self):
         return f"Submission {self.id} ({self.status})"
