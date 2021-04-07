@@ -5,6 +5,8 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from django.conf import settings
 from django.utils.translation import ugettext as _
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
 from . import serializers
 from .models import Submission, Document
@@ -14,6 +16,7 @@ from nlp.elastic import Elastic
 
 
 class Stats(APIView):
+    @method_decorator(cache_page(60 * 60))
     def get(self, request):
         return Response(
             data={

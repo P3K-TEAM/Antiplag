@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.cache import cache
 from math import ceil
 from antiplag.utils import merge_intervals
 
@@ -21,21 +20,15 @@ class Submission(models.Model):
 
     @classmethod
     def count(cls):
-        cached_value = cache.get("submission_count", None)
-        return cached_value if cached_value else cls.objects.count()
+        return cls.objects.count()
 
     @classmethod
     def average_time(cls):
-        cached_value = cache.get("submission_avg_time")
-        if cached_value is not None:
-            return cached_value
-        else:
-            result = cls.objects.filter(
-                status=cls.SubmissionStatus.PROCESSED
-            ).aggregate(
-                average_time=models.Avg(models.F("updated_at") - models.F("created_at"))
-            )
-            return ceil(result.get("average_time").seconds / 60)  # in minutes
+        result = cls.objects.filter(status=cls.SubmissionStatus.PROCESSED).aggregate(
+            average_time=models.Avg(models.F("updated_at") - models.F("created_at"))
+        )
+
+        return ceil(result.get("average_time").seconds / 60)  # in minutes
 
 
 class Document(models.Model):
