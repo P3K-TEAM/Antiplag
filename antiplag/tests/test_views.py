@@ -1,14 +1,13 @@
 from django.test import TestCase
 
+from ..enums import SubmissionStatus
 from ..models import Submission, Document, Result
 from ..views import SubmissionGraphDetail
 
 
 class GraphViewTestCase(TestCase):
     def setUp(self):
-        self.submission = Submission.objects.create(
-            status=Submission.SubmissionStatus.PROCESSED
-        )
+        self.submission = Submission.objects.create(status=SubmissionStatus.PROCESSED)
         self.document = Document.objects.create(
             name="whatever1",
             submission=self.submission,

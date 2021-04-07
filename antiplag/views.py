@@ -9,6 +9,7 @@ from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 
 from . import serializers
+from .enums import SubmissionStatus
 from .models import Submission, Document
 from .constants import TEXT_SUBMISSION_NAME, CONTENT_TYPE_FILE, CONTENT_TYPE_TEXT
 from .tasks import process_documents
@@ -20,8 +21,8 @@ class Stats(APIView):
     def get(self, request):
         return Response(
             data={
-                "submission_count": Submission.count(),
-                "submission_avg_time": Submission.average_time(),
+                "submission_count": Submission.objects.count(),
+                "submission_avg_time": Submission.objects.average_time(),
                 "corpus_size": Elastic.count(),
             }
         )
@@ -35,9 +36,7 @@ class SubmissionList(APIView):
         # TODO: Do not create save the submission to the DB unless all conditions are passing
 
         # create new submission
-        submission = Submission.objects.create(
-            status=Submission.SubmissionStatus.PENDING
-        )
+        submission = Submission.objects.create(status=SubmissionStatus.PENDING)
 
         # check for request content type
         is_file = CONTENT_TYPE_FILE in request.content_type
@@ -129,7 +128,7 @@ class SubmissionDetail(APIView):
         }
 
         # in case the submission is processed, include the documents
-        if submission.status == Submission.SubmissionStatus.PROCESSED:
+        if submission.status == SubmissionStatus.PROCESSED:
             data["documents"] = serializers.DocumentDetailedSerializer(
                 submission.documents.all(), many=True
             ).data
@@ -143,7 +142,7 @@ class SubmissionGraphDetail(APIView):
 
         nodes = {}
         links = []
-        if submission.status == Submission.SubmissionStatus.PROCESSED:
+        if submission.status == SubmissionStatus.PROCESSED:
             for doc in submission.documents.all():
                 doc_data = serializers.DocumentDetailedSerializer(doc).data
                 doc_id = doc_data["id"]
@@ -184,7 +183,7 @@ class DocumentDetail(APIView):
     def get(self, request, id):
         document = get_object_or_404(Document, pk=id)
 
-        if document.submission.status == Submission.SubmissionStatus.PROCESSED:
+        if document.submission.status == SubmissionStatus.PROCESSED:
             return Response(
                 {
                     "document": self.serializer_class(instance=document).data,
@@ -200,10 +199,10 @@ class DocumentDetail(APIView):
 class DocumentDiff(APIView):
     def get(self, request, first_id, second_id):
         first_document = get_object_or_404(Document, pk=first_id)
-        second_document = None
-        intervals = []
 
-        if first_document.submission.status == Submission.SubmissionStatus.PROCESSED:
+        if first_document.submission.status == SubmissionStatus.PROCESSED:
+            second_document = None
+            intervals = []
 
             second_document = next(
                 doc

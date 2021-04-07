@@ -3,6 +3,7 @@ from langdetect import detect
 import os
 from math import ceil
 
+from .enums import SubmissionStatus
 from .models import Result, Submission, Document
 from nlp.elastic import Elastic
 from nlp.text_comparison import text_comparison
@@ -17,7 +18,7 @@ def process_documents(submission_id):
         return
 
     # update submission status
-    submission.status = Submission.SubmissionStatus.PROCESSING
+    submission.status = SubmissionStatus.PROCESSING
     submission.save()
 
     documents = submission.documents.all()
@@ -38,7 +39,7 @@ def process_documents(submission_id):
     compare_documents(documents)
 
     # update submission status
-    submission.status = Submission.SubmissionStatus.PROCESSED
+    submission.status = SubmissionStatus.PROCESSED
     submission.save()
 
 
