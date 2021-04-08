@@ -44,4 +44,4 @@ class EmailTestCase(TestCase):
 
     def test_email_API_key(self):
         """Verify that some Api key is set for mail sending"""
-        self.assertNotEqual(settings.EMAIL_HOST_PASSWORD, None)
+        self.assertNotEqual(settings.EMAIL_HOST_PASSWORD, "")

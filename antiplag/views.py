@@ -11,14 +11,18 @@ from django.utils.decorators import method_decorator
 from . import serializers
 from .enums import SubmissionStatus
 from .models import Submission, Document
-from .constants import TEXT_SUBMISSION_NAME, CONTENT_TYPE_FILE, CONTENT_TYPE_JSON
+from .constants import (
+    TEXT_SUBMISSION_NAME,
+    FILE_UPLOAD_CONTENT_TYPE,
+    TEXT_UPLOAD_CONTENT_TYPE,
+)
 from .tasks import process_documents
 from nlp.elastic import Elastic
-
 
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 import json, requests
+
 
 class Stats(APIView):
     @method_decorator(cache_page(60 * 60))
@@ -37,9 +41,11 @@ class SubmissionList(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
+        submission = Submission(status=SubmissionStatus.PENDING)
+
         # check for request content type
-        is_file = CONTENT_TYPE_FILE in request.content_type
-        is_text = CONTENT_TYPE_JSON in request.content_type
+        is_file = FILE_UPLOAD_CONTENT_TYPE in request.content_type
+        is_text = TEXT_UPLOAD_CONTENT_TYPE in request.content_type
 
         if not (is_file or is_text):
             return Response(
