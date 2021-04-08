@@ -4,6 +4,10 @@ from elasticsearch_dsl.query import MoreLikeThis
 
 class Elastic:
     @staticmethod
+    def count():
+        return Search(index="documents").count()
+
+    @staticmethod
     def find_similar(document_text, similar_count):
         search = Search(index="documents").query(
             MoreLikeThis(fields=["text_raw", "meta"], like=document_text)

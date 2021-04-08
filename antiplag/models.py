@@ -2,18 +2,19 @@ from django.db import models
 from django.contrib.auth.models import User
 from .constants import EMAIL_ADDRESS_RFC5321_LENGTH
 
+from antiplag.enums import SubmissionStatus
+from antiplag.managers import SubmissionManager
+from antiplag.utils import merge_intervals
+
 
 class Submission(models.Model):
-    class SubmissionStatus(models.TextChoices):
-        PENDING = "PENDING"
-        PROCESSING = "PROCESSING"
-        PROCESSED = "PROCESSED"
-
     user = models.ForeignKey(User, null=True, on_delete=models.RESTRICT)
     status = models.CharField(max_length=10, choices=SubmissionStatus.choices)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     email = models.EmailField(max_length=EMAIL_ADDRESS_RFC5321_LENGTH, null=True)
+
+    objects = SubmissionManager()
 
     def __str__(self):
         return f"Submission {self.id} ({self.status})"
@@ -53,3 +54,23 @@ class Result(models.Model):
     @property
     def matches(self):
         return len(self.matched_docs)
+
+    @property
+    def intervals(self):
+        indices = []
+
+        for matched_doc in self.matched_docs:
+            for match in matched_doc["intervals"]:
+                indices.append(
+                    {
+                        "id": self.matched_docs.index(matched_doc),
+                        "name": matched_doc["name"],
+                        "percentage": matched_doc["percentage"],
+                        "from": match["fromA"],
+                        "to": match["toA"],
+                    }
+                )
+
+        merged_intervals = merge_intervals(indices)
+
+        return merged_intervals
