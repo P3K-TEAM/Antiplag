@@ -1,7 +1,6 @@
 from django.test import TestCase
 from django.conf import settings
 from django.test import Client
-from environ import Env
 
 # Create your tests here.
 
@@ -45,8 +44,5 @@ class EmailTestCase(TestCase):
 
     def test_email_API_key(self):
         """Verify that some Api key is set for mail sending"""
-        env = Env(DEBUG=(bool, False))
-        env.read_env(".env")
-        print(env("SENDGRID_API_KEY"))
-        print(env("DJANGO_SECRET_KEY"))
         self.assertNotEqual(settings.EMAIL_HOST_PASSWORD, "")
+        self.assertNotEqual(settings.EMAIL_HOST_PASSWORD, None)
