@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth.models import User
 from .constants import EMAIL_ADDRESS_RFC5321_LENGTH
@@ -5,9 +7,11 @@ from .constants import EMAIL_ADDRESS_RFC5321_LENGTH
 from antiplag.enums import SubmissionStatus
 from antiplag.managers import SubmissionManager
 from antiplag.utils import merge_intervals
+from antiplag.encoders import UUIDEncoder
 
 
 class Submission(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, null=True, on_delete=models.RESTRICT)
     status = models.CharField(max_length=10, choices=SubmissionStatus.choices)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -25,6 +29,7 @@ class Document(models.Model):
         FILE = "FILE"
         TEXT = "TEXT"
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     file = models.FileField(upload_to="documents/", null=True)
     name = models.CharField(max_length=255, blank=True)
     submission = models.ForeignKey(
@@ -42,10 +47,11 @@ class Document(models.Model):
 
 
 class Result(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     document = models.OneToOneField(
         Document, on_delete=models.CASCADE, related_name="result"
     )
-    matched_docs = models.JSONField()
+    matched_docs = models.JSONField(encoder=UUIDEncoder)
     percentage = models.FloatField(default=0)
 
     def __str__(self):
