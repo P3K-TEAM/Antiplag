@@ -10,7 +10,7 @@ jobs:
       - name: Build image
         run: |
           cp .env.example .env
-          echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> .env
+          echo "${{ secrets.environment }}" >> .env
           docker-compose up --build -d
           docker-compose exec -T web pipenv run migrate
 
