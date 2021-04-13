@@ -1,3 +1,5 @@
+DEFAULT_LANG = "en"
+
 stop_words_sk = [
     "a",
     "aby",
