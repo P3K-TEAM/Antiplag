@@ -12,14 +12,13 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 from environ import Env
-import os
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
 
 
 def require_env(name):
     """Raise an error if the environment variable isn't defined"""
-    value = os.getenv(name)
+    value = env(name)
     if value is None or "":
         raise ImproperlyConfigured(
             f'Required environment variable "{name}" is not set.'
@@ -157,7 +156,7 @@ CELERY_RESULT_PERSISTENT = require_env("CELERY_RESULT_PERSISTENT")
 
 # Elasticsearch config
 ELASTICSEARCH_DSL = {
-    "default": {"hosts": env("ELASTIC_HOST")},
+    "default": {"hosts": require_env("ELASTIC_HOST")},
 }
 
 TESSERACT_PATH = require_env("TESSERACT_PATH")
