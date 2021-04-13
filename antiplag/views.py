@@ -218,7 +218,6 @@ class DocumentDetail(APIView):
                 {
                     "document": self.serializer_class(instance=document).data,
                     "submission_id": document.submission.id,
-                    "is_multiple": document.submission.documents.count() > 1,
                 }
             )
         else:
