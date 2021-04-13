@@ -170,6 +170,9 @@ MAX_FILES_PER_REQUEST = 50
 # Minimal string length considered similarity
 MIN_SIMILARITY_LENGTH = 50
 
+# Ignore similarities below this value
+SIMILARITY_THRESHOLD = 0.15
+
 # Email settings, service provider SendGrid
 EMAIL_HOST = "smtp.sendgrid.net"
 EMAIL_HOST_USER = "apikey"  # this is exactly the value 'apikey'
