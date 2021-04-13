@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from .constants import EMAIL_ADDRESS_RFC5321_LENGTH
 
 from antiplag.enums import SubmissionStatus
 from antiplag.managers import SubmissionManager
@@ -11,6 +12,7 @@ class Submission(models.Model):
     status = models.CharField(max_length=10, choices=SubmissionStatus.choices)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    email = models.EmailField(max_length=EMAIL_ADDRESS_RFC5321_LENGTH, null=True)
 
     objects = SubmissionManager()
 

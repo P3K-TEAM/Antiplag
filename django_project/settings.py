@@ -12,8 +12,19 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 from environ import Env
-
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
+
+
+def require_env(name):
+    """Raise an error if the environment variable isn't defined"""
+    value = env(name)
+    if value is None or "":
+        raise ImproperlyConfigured(
+            f'Required environment variable "{name}" is not set.'
+        )
+    return value
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,13 +32,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = Env(DEBUG=(bool, False))
 env.read_env(".env")
 
-DEBUG = env("DEBUG")
+DEBUG = require_env("DEBUG")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # Unique secret can be generated as `base64 /dev/urandom | head -c50`
-SECRET_KEY = env("DJANGO_SECRET_KEY")
+SECRET_KEY = require_env("DJANGO_SECRET_KEY")
 
 ALLOWED_HOSTS = ["antiplag.sk", "localhost", "127.0.0.1"]
 
@@ -139,16 +150,16 @@ MEDIA_ROOT = BASE_DIR / "files"
 MEDIA_URL = "/files/"
 
 # Celery configuration
-CELERY_BROKER_URL = env("CELERY_BROKER_URL")
-CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND")
-CELERY_RESULT_PERSISTENT = env("CELERY_RESULT_PERSISTENT")
+CELERY_BROKER_URL = require_env("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = require_env("CELERY_RESULT_BACKEND")
+CELERY_RESULT_PERSISTENT = require_env("CELERY_RESULT_PERSISTENT")
 
 # Elasticsearch config
 ELASTICSEARCH_DSL = {
-    "default": {"hosts": env("ELASTIC_HOST")},
+    "default": {"hosts": require_env("ELASTIC_HOST")},
 }
 
-TESSERACT_PATH = env("TESSERACT_PATH")
+TESSERACT_PATH = require_env("TESSERACT_PATH")
 
 # Set max file size in requests in MB
 MAX_FILE_SIZE = 20
@@ -158,3 +169,10 @@ MAX_FILES_PER_REQUEST = 50
 
 # Minimal string length considered similarity
 MIN_SIMILARITY_LENGTH = 50
+
+# Email settings, service provider SendGrid
+EMAIL_HOST = "smtp.sendgrid.net"
+EMAIL_HOST_USER = "apikey"  # this is exactly the value 'apikey'
+EMAIL_HOST_PASSWORD = require_env("SENDGRID_API_KEY")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

@@ -35,3 +35,15 @@ msgstr "Prekročili ste maximálnu veľkosť súboru. (%s) MB"
 #: antiplag/views.py:74
 msgid "No text was specified."
 msgstr "Nezadali ste žiaden text."
+
+#: .\tasks.py:56
+msgid "Antiplag - Your check has finished!"
+msgstr "Antiplag - Tvoja kontrola bola dokončená!"
+
+#: .\tasks.py:57
+msgid "Check the results of your check at https://antiplag.sk/result/"
+msgstr "Pozri si výsledok svojej kontroly na https://antiplag.sk/result/"
+
+#: .\views.py:41
+msgid "Unrecognized email address format."
+msgstr "Nespoznaný formát emailu."

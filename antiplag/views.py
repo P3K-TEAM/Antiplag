@@ -11,9 +11,17 @@ from django.utils.decorators import method_decorator
 from . import serializers
 from .enums import SubmissionStatus
 from .models import Submission, Document
-from .constants import TEXT_SUBMISSION_NAME, CONTENT_TYPE_FILE, CONTENT_TYPE_TEXT
+from .constants import (
+    TEXT_SUBMISSION_NAME,
+    FILE_UPLOAD_CONTENT_TYPE,
+    TEXT_UPLOAD_CONTENT_TYPE,
+)
 from .tasks import process_documents
 from nlp.elastic import Elastic
+
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+import json, requests
 
 
 class Stats(APIView):
@@ -33,14 +41,11 @@ class SubmissionList(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
-        # TODO: Do not create save the submission to the DB unless all conditions are passing
-
-        # create new submission
-        submission = Submission.objects.create(status=SubmissionStatus.PENDING)
+        submission = Submission(status=SubmissionStatus.PENDING)
 
         # check for request content type
-        is_file = CONTENT_TYPE_FILE in request.content_type
-        is_text = CONTENT_TYPE_TEXT in request.content_type
+        is_file = FILE_UPLOAD_CONTENT_TYPE in request.content_type
+        is_text = TEXT_UPLOAD_CONTENT_TYPE in request.content_type
 
         if not (is_file or is_text):
             return Response(
@@ -86,6 +91,18 @@ class SubmissionList(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            email = request.POST.get("email", None)
+            if email is not None:
+                try:
+                    validate_email(email)
+                except ValidationError as e:
+                    return Response(
+                        {"error": _("Unrecognized email address format.")},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+            submission.email = email
+            submission.save()
+
             for file in files:
                 Document.objects.create(
                     file=file,
@@ -95,13 +112,26 @@ class SubmissionList(APIView):
                 )
 
         else:
-            text_raw = request.body.decode()
+            data = json.loads(request.body)
+            text_raw = data["text"]
+            email = data["email"] if "email" in data else None
 
             if not text_raw.strip():
                 return Response(
                     {"error": _("No text was specified.")},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
+            if email is not None:
+                try:
+                    validate_email(email)
+                except ValidationError as e:
+                    return Response(
+                        {"error": _("Unrecognized email address format.")},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+            submission.email = email
+            submission.save()
 
             Document.objects.create(
                 name=TEXT_SUBMISSION_NAME,
