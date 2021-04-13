@@ -10,41 +10,41 @@ class Migration(migrations.Migration):
 
     operations = [
         # Rename PKs
-        migrations.RenameField(model_name="Document", old_name="uuid", new_name="id"),
-        migrations.RenameField(model_name="Submission", old_name="uuid", new_name="id"),
-        migrations.RenameField(model_name="Result", old_name="uuid", new_name="id"),
+        migrations.RenameField(model_name="document", old_name="uuid", new_name="id"),
+        migrations.RenameField(model_name="submission", old_name="uuid", new_name="id"),
+        migrations.RenameField(model_name="result", old_name="uuid", new_name="id"),
         # Make UUID fields unique and PK
         migrations.AlterField(
-            model_name="Document",
+            model_name="document",
             name="id",
             field=models.UUIDField(
                 default=uuid.uuid4,
                 editable=False,
-                unique=True,
                 primary_key=True,
                 serialize=False,
+                null=False,
             ),
         ),
         migrations.AlterField(
-            model_name="Submission",
+            model_name="submission",
             name="id",
             field=models.UUIDField(
                 default=uuid.uuid4,
                 editable=False,
-                unique=True,
                 primary_key=True,
                 serialize=False,
+                null=False,
             ),
         ),
         migrations.AlterField(
-            model_name="Result",
+            model_name="result",
             name="id",
             field=models.UUIDField(
                 default=uuid.uuid4,
                 editable=False,
-                unique=True,
                 primary_key=True,
                 serialize=False,
+                null=False,
             ),
         ),
     ]

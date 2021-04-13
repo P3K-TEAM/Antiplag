@@ -8,9 +8,9 @@ class Migration(migrations.Migration):
 
     operations = [
         # Delete old ID fields
-        migrations.RemoveField(model_name="Document", name="id"),
-        migrations.RemoveField(model_name="Document", name="submission"),
-        migrations.RemoveField(model_name="Submission", name="id"),
-        migrations.RemoveField(model_name="Result", name="id"),
-        migrations.RemoveField(model_name="Result", name="document"),
+        migrations.RemoveField(model_name="document", name="id"),
+        migrations.RemoveField(model_name="document", name="submission"),
+        migrations.RemoveField(model_name="submission", name="id"),
+        migrations.RemoveField(model_name="result", name="id"),
+        migrations.RemoveField(model_name="result", name="document"),
     ]

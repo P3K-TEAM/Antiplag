@@ -51,24 +51,24 @@ class Migration(migrations.Migration):
         # Fill them up
         migrations.RunPython(
             partial(
-                migrate_to_uuid, model="Document", id_field="id", uuid_field="uuid"
+                migrate_to_uuid, model="document", id_field="id", uuid_field="uuid"
             ),
             reverse_code=migrations.RunPython.noop,
         ),
         migrations.RunPython(
-            partial(migrate_to_uuid, model="Result", id_field="id", uuid_field="uuid"),
+            partial(migrate_to_uuid, model="result", id_field="id", uuid_field="uuid"),
             reverse_code=migrations.RunPython.noop,
         ),
         migrations.RunPython(
             partial(
-                migrate_to_uuid, model="Submission", id_field="id", uuid_field="uuid"
+                migrate_to_uuid, model="submission", id_field="id", uuid_field="uuid"
             ),
             reverse_code=migrations.RunPython.noop,
         ),
         migrations.RunPython(
             partial(
                 migrate_to_uuid,
-                model="Document",
+                model="document",
                 id_field="submission_id",
                 uuid_field="submission_uuid",
             ),
