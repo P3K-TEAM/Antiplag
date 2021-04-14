@@ -109,7 +109,7 @@ def compare_documents(
             similarity = None
             try:
                 # returns percentage representing how similar docs are
-                similarity = text_comparison(doc.text, similar_doc["text"])
+                similarity = text_comparison(doc.text, similar_doc["text_preprocessed"])
                 result_similarity += similarity["first_to_second"]["similarity"] * 100
             except:
                 # TODO: Should uncomparable documents be included?
@@ -128,7 +128,7 @@ def compare_documents(
                         / round_factor,
                         "intervals": similarity["first_to_second"]["intervals"],
                         "elastic_id": similar_doc["elastic_id"],
-                        "text": similar_doc["text"],
+                        "text": similar_doc["text_preprocessed"],
                     }
                 )
 
