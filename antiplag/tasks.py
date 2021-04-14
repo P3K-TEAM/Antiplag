@@ -7,8 +7,8 @@ from django.core.mail import send_mail
 from django.utils.translation import ugettext as _
 
 from .constants import EMAIL_SENDER
-from .enums import SubmissionStatus
-from .models import Result, Submission, Document
+from .enums import SubmissionStatus, MatchType
+from .models import Submission, Document
 from nlp.elastic import Elastic
 from nlp.text_comparison import text_comparison
 from nlp.text_preprocessing import extract_text_from_file, preprocess_text
@@ -40,6 +40,7 @@ def process_documents(submission_id):
 
         # save the document
         document.save()
+
     # document comparison
     compare_documents(documents)
 
@@ -103,10 +104,9 @@ def compare_documents(
         result_similarity = 0
         compared_count = 0
 
-        results = []
         # Compare current document with elastic docs
         for similar_doc in similar_documents:
-            similarity = None
+
             try:
                 # returns percentage representing how similar docs are
                 similarity = text_comparison(doc.text, similar_doc["text"])
@@ -117,19 +117,15 @@ def compare_documents(
 
             if similarity["first_to_second"]["similarity"] > threshold:
                 compared_count += 1
-                results.append(
-                    {
-                        "name": similar_doc["name"],
-                        "percentage": ceil(
-                            similarity["first_to_second"]["similarity"]
-                            * 100
-                            * round_factor
-                        )
-                        / round_factor,
-                        "intervals": similarity["first_to_second"]["intervals"],
-                        "elastic_id": similar_doc["elastic_id"],
-                        "text": similar_doc["text"],
-                    }
+                doc.results.create(
+                    match_type=MatchType.CORPUS,
+                    match_id=similar_doc["elastic_id"],
+                    match_name=similar_doc["name"],
+                    percentage=ceil(
+                        similarity["first_to_second"]["similarity"] * 100 * round_factor
+                    )
+                    / round_factor,
+                    ranges=similarity["first_to_second"]["intervals"],
                 )
 
         # Compare current document against user uploaded docs
@@ -144,25 +140,21 @@ def compare_documents(
 
             if similarity["first_to_second"]["similarity"] > threshold:
                 compared_count += 1
-                results.append(
-                    {
-                        "name": str(user_doc),
-                        "percentage": ceil(
-                            similarity["first_to_second"]["similarity"]
-                            * 100
-                            * round_factor
-                        )
-                        / round_factor,
-                        "intervals": similarity["first_to_second"]["intervals"],
-                        "id": user_doc.id,
-                    }
+
+                doc.results.create(
+                    match_type=MatchType.UPLOADED,
+                    match_id=user_doc.id,
+                    match_name=user_doc.name,
+                    percentage=ceil(
+                        similarity["first_to_second"]["similarity"] * 100 * round_factor
+                    )
+                    / round_factor,
+                    ranges=similarity["first_to_second"]["intervals"],
                 )
 
         if compared_count > 0:
             result_similarity /= compared_count
 
-        Result.objects.create(
-            document=doc,
-            matched_docs=results,
-            percentage=ceil(result_similarity * round_factor) / round_factor,
-        )
+        # save total percentage to the doc
+        doc.total_percentage = ceil(result_similarity * round_factor) / round_factor
+        doc.save()

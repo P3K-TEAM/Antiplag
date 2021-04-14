@@ -9,7 +9,6 @@ def migrate_to_uuid(apps, schema_editor, model, id_field, uuid_field):
     for model_instance in model_class.objects.all():
         obj_id = getattr(model_instance, id_field)
         if obj_id:
-            print(obj_id)
             new_uuid = uuid.uuid5(uuid.NAMESPACE_OID, str(obj_id))
             setattr(model_instance, uuid_field, new_uuid)
             model_instance.save()
