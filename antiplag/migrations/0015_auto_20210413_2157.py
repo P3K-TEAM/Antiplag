@@ -36,7 +36,7 @@ def migrate_result_to_new_model(apps, schema_editor):
         except ValueError:
             # else it's elastic id
             result["match_id"] = doc["id"]
-            result["match_type"] = "CORPUS"
+            result["match_type"] = MatchType.CORPUS
 
         result["match_name"] = doc["name"]
         result["ranges"] = doc["intervals"]
