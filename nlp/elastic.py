@@ -1,4 +1,4 @@
-from elasticsearch_dsl import Search
+from elasticsearch_dsl import Search, Document
 from elasticsearch_dsl.query import MoreLikeThis
 
 
@@ -19,3 +19,7 @@ class Elastic:
         ]
 
         return similar_docs
+
+    @staticmethod
+    def get(id):
+        return Document.get(id=id, index="documents")
