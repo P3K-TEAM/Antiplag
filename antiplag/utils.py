@@ -75,7 +75,8 @@ def merge_intervals(indices):
         if interval["intervals"][0] > prev and count != 0:
             intervals.append(
                 {
-                    "ranges": {"from": prev, "to": interval["intervals"][0] - 1},
+                    "from": prev,
+                    "to": interval["intervals"][0] - 1,
                     "matches": docs[:],
                 }
             )
