@@ -243,7 +243,7 @@ class DocumentDiff(APIView):
                 ),
                 None,
             )
-
+            print(second_document_result)
             if not second_document_result:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -251,7 +251,7 @@ class DocumentDiff(APIView):
             if second_document_result.match_type == MatchType.UPLOADED:
                 second_document_content = Document.objects.get(pk=second_id).text
             else:
-                second_document_content = Elastic.get(second_id)
+                second_document_content = Elastic.get(id=second_id)["text_preprocessed"]
 
             return Response(
                 {
