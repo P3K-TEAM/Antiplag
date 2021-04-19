@@ -3,6 +3,9 @@ from elasticsearch_dsl.query import MoreLikeThis
 
 
 class Elastic(Document):
+    class Index:
+        name = 'documents'
+
     @staticmethod
     def count():
         return Search(index="documents").count()
@@ -19,6 +22,3 @@ class Elastic(Document):
         ]
 
         return similar_docs
-
-    class Index:
-        name = 'documents'

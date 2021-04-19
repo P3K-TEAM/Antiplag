@@ -243,7 +243,7 @@ class DocumentDiff(APIView):
                 ),
                 None,
             )
-            print(second_document_result)
+
             if not second_document_result:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
