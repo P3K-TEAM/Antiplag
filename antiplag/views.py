@@ -1,3 +1,5 @@
+import uuid
+
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,7 +11,7 @@ from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 
 from . import serializers
-from .enums import SubmissionStatus
+from .enums import SubmissionStatus, MatchType
 from .models import Submission, Document
 from .constants import (
     TEXT_SUBMISSION_NAME,
@@ -21,7 +23,7 @@ from nlp.elastic import Elastic
 
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-import json, requests
+import json
 
 
 class Stats(APIView):
@@ -172,38 +174,39 @@ class SubmissionGraphDetail(APIView):
 
         nodes = {}
         links = []
+
         if submission.status == SubmissionStatus.PROCESSED:
             for doc in submission.documents.all():
-                doc_data = serializers.DocumentDetailedSerializer(doc).data
-                doc_id = doc_data["id"]
-                nodes[doc_id] = {
-                    "id": doc_id,
-                    "name": doc_data["name"],
+
+                nodes[doc.id] = {
+                    "id": str(doc.id),
+                    "name": doc.name,
                     "uploaded": True,
                 }
 
-                matched_documents = doc.result.matched_docs
-                for matched_doc in matched_documents:
-                    # It's either elastic document or our document
-                    matched_id = matched_doc.get("elastic_id", None) or matched_doc.get(
-                        "id", None
-                    )
-                    if not matched_id:
-                        continue
+                for result in doc.results.all():
 
-                    if matched_id not in nodes:
-                        nodes[matched_id] = {
-                            "name": matched_doc.get("name", ""),
-                            "id": matched_id,
+                    if result.match_type == MatchType.UPLOADED:
+                        # internal uuid
+                        match_id = uuid.UUID(result.match_id)
+                    else:
+                        # elastic id
+                        match_id = result.match_id
+
+                    if match_id not in nodes:
+                        nodes[match_id] = {
+                            "id": str(match_id),
+                            "name": result.match_name,
                         }
 
                     links.append(
                         {
-                            "source": doc_id,
-                            "target": matched_id,
-                            "value": matched_doc.get("percentage", 0),
+                            "source": str(doc.id),
+                            "target": str(match_id),
+                            "value": result.percentage,
                         }
                     )
+
         return Response(data={"nodes": list(nodes.values()), "links": links})
 
 
@@ -218,7 +221,6 @@ class DocumentDetail(APIView):
                 {
                     "document": self.serializer_class(instance=document).data,
                     "submission_id": document.submission.id,
-                    "is_multiple": document.submission.documents.count() > 1,
                 }
             )
         else:
@@ -231,19 +233,25 @@ class DocumentDiff(APIView):
         first_document = get_object_or_404(Document, pk=first_id)
 
         if first_document.submission.status == SubmissionStatus.PROCESSED:
-            second_document = None
-            intervals = []
 
-            second_document = next(
-                doc
-                for doc in first_document.result.matched_docs
-                if doc["elastic_id"] == second_id
+            # find document to compare with
+            second_document_result = next(
+                (
+                    result
+                    for result in first_document.results.all()
+                    if result.match_id == second_id
+                ),
+                None,
             )
 
-            if not second_document:
+            if not second_document_result:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
-            intervals = second_document["intervals"]
+            # get second document content (internal or elastic)
+            if second_document_result.match_type == MatchType.UPLOADED:
+                second_document_content = Document.objects.get(pk=second_id).text
+            else:
+                second_document_content = Elastic.get(second_id)
 
             return Response(
                 {
@@ -252,10 +260,10 @@ class DocumentDiff(APIView):
                         "content": first_document.text,
                     },
                     "textB": {
-                        "name": second_document["name"],
-                        "content": second_document["text"],
+                        "name": second_document_result.match_name,
+                        "content": second_document_content,
                     },
-                    "matches": intervals,
+                    "ranges": second_document_result.ranges,
                 }
             )
         else:

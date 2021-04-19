@@ -1,4 +1,4 @@
-from elasticsearch_dsl import Search
+from elasticsearch_dsl import Search, Document
 from elasticsearch_dsl.query import MoreLikeThis
 
 
@@ -14,8 +14,12 @@ class Elastic:
         )
 
         similar_docs = [
-            {"name": doc.name, "text": doc.text_raw, "elastic_id": doc.meta["id"]}
+            {"name": doc.name, "text": doc.text_raw, "id": doc.meta["id"]}
             for doc in search[:similar_count]
         ]
 
         return similar_docs
+
+    @staticmethod
+    def get(id):
+        return Document.get(id=id, index="documents")

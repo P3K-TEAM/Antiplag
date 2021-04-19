@@ -45,24 +45,28 @@ class DocumentSerializer(serializers.ModelSerializer):
 
 
 class ResultSerializer(serializers.ModelSerializer):
+    id = serializers.CharField(source="match_id")
+    name = serializers.CharField(source="match_name")
+
     class Meta:
         model = Result
-        fields = ("percentage", "matched_docs")
+        fields = ("id", "name", "percentage")
 
 
 class DocumentDetailedSerializer(NonNullModelSerializer, serializers.ModelSerializer):
-    percentage = serializers.ReadOnlyField(source="result.percentage")
-    matches = serializers.ReadOnlyField(source="result.matches")
+    matches = serializers.SerializerMethodField()
 
     class Meta:
         model = Document
-        fields = ("id", "name", "matches", "percentage")
+        fields = ("id", "name", "total_percentage", "matches")
+
+    def get_matches(self, obj):
+        return obj.results.count()
 
 
 class DocumentResultSerializer(serializers.ModelSerializer):
-    result = ResultSerializer(read_only=True)
-    intervals = serializers.ReadOnlyField(source="result.intervals")
+    matches = ResultSerializer(source="results", read_only=True, many=True)
 
     class Meta:
         model = Document
-        fields = ("name", "result", "text", "intervals")
+        fields = ("name", "text", "total_percentage", "matches", "ranges")
