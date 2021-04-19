@@ -4,7 +4,7 @@ from elasticsearch_dsl.query import MoreLikeThis
 
 class Elastic(Document):
     class Index:
-        name = 'documents'
+        name = "documents"
 
     @staticmethod
     def count():
@@ -17,7 +17,11 @@ class Elastic(Document):
         )
 
         similar_docs = [
-            {"name": doc.name, "elastic_id": doc.meta["id"], "text_preprocessed": doc.text_preprocessed}
+            {
+                "name": doc.name,
+                "elastic_id": doc.meta["id"],
+                "text_preprocessed": doc.text_preprocessed,
+            }
             for doc in search[:similar_count]
         ]
 

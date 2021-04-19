@@ -9,15 +9,11 @@ def compare_two_texts(a, b, length):
     return {
         "first_to_second": {
             "intervals": first_to_second[0],
-            "similarity": round(
-                first_to_second[1] / len(a), 3
-            ) * 100,
+            "similarity": round(first_to_second[1] / len(a), 3) * 100,
         },
         "second_to_first": {
             "intervals": second_to_first[0],
-            "similarity": round(
-                second_to_first[1] / len(b), 3
-            ) * 100,
+            "similarity": round(second_to_first[1] / len(b), 3) * 100,
         },
     }
 
