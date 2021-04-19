@@ -109,8 +109,8 @@ def compare_documents(
 
             try:
                 # returns percentage representing how similar docs are
-                similarity = text_comparison(doc.text, similar_doc["text"])
-                result_similarity += similarity["first_to_second"]["similarity"] * 100
+                similarity = text_comparison(doc.text, similar_doc["text_preprocessed"])
+                result_similarity += similarity["first_to_second"]["similarity"]
             except:
                 # TODO: Should uncomparable documents be included?
                 similarity = None
@@ -122,7 +122,7 @@ def compare_documents(
                     match_id=similar_doc["elastic_id"],
                     match_name=similar_doc["name"],
                     percentage=ceil(
-                        similarity["first_to_second"]["similarity"] * 100 * round_factor
+                        similarity["first_to_second"]["similarity"] * round_factor
                     )
                     / round_factor,
                     ranges=similarity["first_to_second"]["intervals"],
@@ -133,7 +133,7 @@ def compare_documents(
             try:
                 # returns percentage representing how similar docs are
                 similarity = text_comparison(doc.text, user_doc.text)
-                result_similarity += similarity["first_to_second"]["similarity"] * 100
+                result_similarity += similarity["first_to_second"]["similarity"]
             except:
                 # TODO: Should uncomparable documents be included?
                 similarity = None
@@ -146,7 +146,7 @@ def compare_documents(
                     match_id=user_doc.id,
                     match_name=user_doc.name,
                     percentage=ceil(
-                        similarity["first_to_second"]["similarity"] * 100 * round_factor
+                        similarity["first_to_second"]["similarity"] * round_factor
                     )
                     / round_factor,
                     ranges=similarity["first_to_second"]["intervals"],
