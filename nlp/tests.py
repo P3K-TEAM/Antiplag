@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from .text_preprocessing import preprocess_text
+from .text_preprocessing import preprocess_text, words_to_numbers
 from .greedy_string_tiling import greedy_string_tiling
 
 
@@ -18,6 +18,29 @@ class PreprocessingTestCase(TestCase):
         text = "  test   test  "
         result = preprocess_text(text, lemmatize=False)
         expected = (["test", "test"], "test test")
+        self.assertEqual(result, expected)
+
+
+class W2NTestCase(TestCase):
+    def test_default_lang(self):
+        text = "one two three"
+        result = words_to_numbers(text)
+        expected = "1 2 3"
+
+        self.assertEqual(result, expected)
+
+    def test_spanish_lang(self):
+        text = "uno dos tres"
+        result = words_to_numbers(text, language="es")
+        expected = "1 2 3"
+
+        self.assertEqual(result, expected)
+
+    def test_unsupported_lang(self):
+        text = "jeden dva tri"
+        result = words_to_numbers(text, language="sk")
+        expected = "jeden dva tri"
+
         self.assertEqual(result, expected)
 
 

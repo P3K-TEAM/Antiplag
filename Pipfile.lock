@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1aaf5e55d6fa0dbfa7eb6726204f1b7b1a6d5ad962801891672a2bd2c6502f60"
+            "sha256": "fdf61d8a5667bc39b62dc4181003e30f72502dea48e55570216247741bc14a85"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -1667,11 +1667,11 @@
         },
         "word2number-i18n": {
             "hashes": [
-                "sha256:65e027a994c10bf52b3ed2f734a8f04eecade1e5dc45fcd9a2949ddcfc122a28",
-                "sha256:eac86a53e4193ae38ea625937c9b57cd88c66d01e99074f434699fb34df51182"
+                "sha256:926605b9f4c19f19493030c47a34726e4b60d3607fa4ee5e824f1a1bcf492d22",
+                "sha256:ccf0097ec167a77489908cd3a41bb808f73fddcedf2d68e8fe1d280f724d4a23"
             ],
             "index": "pypi",
-            "version": "==0.1.2"
+            "version": "==1.1.0"
         },
         "xlrd": {
             "hashes": [

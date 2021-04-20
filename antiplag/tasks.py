@@ -69,10 +69,9 @@ def detect_language(text_raw):
 
 
 def process_raw_text(text, language):
-    # TODO: Would not work in parallel
-    os.environ["w2n.lang"] = language
     return preprocess_text(
         text,
+        language=language,
         words_to_numbers=True,
         remove_numbers=False,
         tokenize_words=False,

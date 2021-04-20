@@ -16,7 +16,7 @@ import pytesseract
 from PIL import Image, UnidentifiedImageError
 from django.conf import settings
 
-from .constants import stop_words_cz, stop_words_sk
+from .constants import stop_words_cz, stop_words_sk, DEFAULT_LANG
 
 try:
     nltk.data.find("stopwords")
@@ -52,7 +52,7 @@ def preprocess_text(
     numbers_to_words=False,
     remove_numbers=True,
     remove_stopwords=False,
-    language="sk",
+    language=DEFAULT_LANG,
     tokenize_words=True,
     tokenize_sentences=False,
     stem=False,
@@ -68,7 +68,7 @@ def preprocess_text(
         processed_text = remove_stopwords_func(processed_text, language)
 
     if words_to_numbers:
-        processed_text = words_to_numbers_func(processed_text)
+        processed_text = words_to_numbers(processed_text, language)
 
     if numbers_to_words:
         processed_text = numbers_to_words_func(processed_text)
@@ -147,16 +147,22 @@ def lowercase_text_func(text):
     return text.lower()
 
 
-def words_to_numbers_func(text):
+def words_to_numbers(text, language=DEFAULT_LANG):
+    try:
+        w2n_instance = w2n.W2N(lang_param=language)
+    except FileNotFoundError:  # FileNotFoundError is thrown when w2n tries to locate data for unsupported lang
+        return text
+
     text = text.split()
     new_text = []
     for word in text:
         try:
-            new_text.append(w2n.word_to_num(word))
+            word_as_number = str(w2n_instance.word_to_num(word))
+            new_text.append(word_as_number)
         except ValueError:
             new_text.append(word)
 
-    text = " ".join(map(str, new_text))
+    text = " ".join(new_text)
     return text
 
 
