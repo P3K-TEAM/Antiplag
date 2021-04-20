@@ -68,7 +68,7 @@ def preprocess_text(
         processed_text = remove_stopwords_func(processed_text, language)
 
     if words_to_numbers:
-        processed_text = words_to_numbers(processed_text, language)
+        processed_text = convert_words_to_numbers(processed_text, language)
 
     if numbers_to_words:
         processed_text = numbers_to_words_func(processed_text)
@@ -147,7 +147,7 @@ def lowercase_text_func(text):
     return text.lower()
 
 
-def words_to_numbers(text, language=DEFAULT_LANG):
+def convert_words_to_numbers(text, language=DEFAULT_LANG):
     try:
         w2n_instance = w2n.W2N(lang_param=language)
     except FileNotFoundError:  # FileNotFoundError is thrown when w2n tries to locate data for unsupported lang
