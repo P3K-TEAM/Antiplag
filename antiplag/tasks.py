@@ -1,5 +1,5 @@
-import os
 from math import ceil
+import sys
 
 from langdetect import detect
 from celery import shared_task
@@ -29,17 +29,25 @@ def process_documents(submission_id):
     documents = submission.documents.all()
 
     for document in documents:
+        try:
+            # extract file contents
+            if document.type == Document.DocumentType.FILE:
+                document.text_raw = process_file(document.file)
 
-        # extract file contents
-        if document.type == Document.DocumentType.FILE:
-            document.text_raw = process_file(document.file)
+            # preprocess text
+            document.language = detect_language(document.text_raw)
+            document.text = process_raw_text(document.text_raw, document.language)
 
-        # preprocess text
-        document.language = detect_language(document.text_raw)
-        document.text = process_raw_text(document.text_raw, document.language)
+            # save the document
+            document.save()
 
-        # save the document
-        document.save()
+        except Exception as e:
+            print(e, file=sys.stderr)
+
+            if document.type == Document.DocumentType.FILE:
+                document.text_raw = ""
+            document.text = document.text_raw
+            document.save()
 
     # document comparison
     compare_documents(documents)
@@ -110,9 +118,9 @@ def compare_documents(
                 # returns percentage representing how similar docs are
                 similarity = text_comparison(doc.text, similar_doc["text_preprocessed"])
                 result_similarity += similarity["first_to_second"]["similarity"]
-            except:
+            except Exception:
                 # TODO: Should uncomparable documents be included?
-                similarity = None
+                continue
 
             if similarity["first_to_second"]["similarity"] > threshold:
                 compared_count += 1
@@ -133,9 +141,9 @@ def compare_documents(
                 # returns percentage representing how similar docs are
                 similarity = text_comparison(doc.text, user_doc.text)
                 result_similarity += similarity["first_to_second"]["similarity"]
-            except:
+            except Exception:
                 # TODO: Should uncomparable documents be included?
-                similarity = None
+                continue
 
             if similarity["first_to_second"]["similarity"] > threshold:
                 compared_count += 1
