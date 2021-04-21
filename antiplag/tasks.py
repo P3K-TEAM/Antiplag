@@ -60,7 +60,7 @@ def process_documents(submission_id):
     if submission.email is not None:
         send_mail(
             _("Antiplag - Your check has finished!"),
-            _("Check the results of your check at https://antiplag.sk/result/%s/")
+            _("Check the results of your check at https://antiplag.sk/submission/%s/")
             % submission.id,
             EMAIL_SENDER,
             [submission.email],

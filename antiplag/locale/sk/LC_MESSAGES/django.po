@@ -41,8 +41,8 @@ msgid "Antiplag - Your check has finished!"
 msgstr "Antiplag - Tvoja kontrola bola dokončená!"
 
 #: .\tasks.py:57
-msgid "Check the results of your check at https://antiplag.sk/result/"
-msgstr "Pozri si výsledok svojej kontroly na https://antiplag.sk/result/"
+msgid "Check the results of your check at https://antiplag.sk/submission/"
+msgstr "Pozri si výsledok svojej kontroly na https://antiplag.sk/submission/"
 
 #: .\views.py:41
 msgid "Unrecognized email address format."
