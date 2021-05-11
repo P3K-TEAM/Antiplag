@@ -37,9 +37,9 @@ class W2NTestCase(TestCase):
         self.assertEqual(result, expected)
 
     def test_unsupported_lang(self):
-        text = "jeden dva tri"
-        result = convert_words_to_numbers(text, language="sk")
-        expected = "jeden dva tri"
+        text = "egy kettő három"
+        result = convert_words_to_numbers(text, language="hu")
+        expected = "egy kettő három"
 
         self.assertEqual(result, expected)
 
