@@ -29,6 +29,13 @@ class W2NTestCase(TestCase):
 
         self.assertEqual(result, expected)
 
+    def test_slovak_lang(self):
+        text = "jedna dva tri"
+        result = convert_words_to_numbers(text, language="sk")
+        expected = "1 2 3"
+
+        self.assertEqual(result, expected)
+
     def test_spanish_lang(self):
         text = "uno dos tres"
         result = convert_words_to_numbers(text, language="es")
