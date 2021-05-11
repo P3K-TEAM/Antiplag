@@ -40,7 +40,7 @@ DEBUG = require_env("DEBUG")
 # Unique secret can be generated as `base64 /dev/urandom | head -c50`
 SECRET_KEY = require_env("DJANGO_SECRET_KEY")
 
-ALLOWED_HOSTS = ["antiplag.sk", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["www.antiplag.sk", "antiplag.sk", "localhost", "127.0.0.1"]
 
 # Application definition
 
